@@ -14,6 +14,7 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.24.2",
     "@radix-ui/react-slot": "^1.1.2",
+    "@tailwindcss/typography": "^0.5.10",
     "@tailwindcss/vite": "^4.0.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -21,6 +22,7 @@
     "lucide-react": "^0.479.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^6.22.3",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.14",
     "tailwindcss-animate": "^1.0.7"
