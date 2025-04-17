@@ -4,6 +4,7 @@ import { PageContainer, MainContent, Card, Section } from "@/components/layout";
 import { Logo } from "@/components/logo";
 import { H1, H2, P } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
+import { StarMapSection } from "./starmap.tsx";
 
 export function KatPage() {
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ export function KatPage() {
               <li>API integrations</li>
               <li>And more!</li>
             </ul>
+            <StarMapSection />
           </Card>
         </Section>
       </MainContent>
