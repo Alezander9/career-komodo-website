@@ -52,25 +52,35 @@ export function SabrinaPage() {
             <P>Students can experiment with:</P>
             <div className="flex flex-col gap-4">
               <p>{status}</p>
-              <button
-                className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
-                onClick={startRecording}
-                disabled={status === "recording"}
-              >
-                Start Recording
-              </button>
-              <button
-                className="bg-red-500 text-white p-2 rounded-md disabled:opacity-50"
-                onClick={stopRecording}
-                disabled={status !== "recording"}
-              >
-                Stop Recording
-              </button>
-              <audio src={mediaBlobUrl} controls />
+              {status !== "recording" && (
+                <button
+                  className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
+                  onClick={startRecording}
+                  disabled={status === "recording"}
+                >
+                  Start Recording
+                </button>
+              )}
+              {status === "recording" && (
+                <button
+                  className="bg-red-500 text-white p-2 rounded-md disabled:opacity-50"
+                  onClick={stopRecording}
+                  disabled={status !== "recording"}
+                >
+                  Stop Recording
+                </button>
+              )}
               {mediaBlobUrl && (
-                <a href={mediaBlobUrl} download="recording.webm">
-                  Download
-                </a>
+                <div className="flex flex-col gap-2">
+                  <audio src={mediaBlobUrl} controls />
+                  <a
+                    className="p-2 rounded-md bg-white text-black text-center"
+                    href={mediaBlobUrl}
+                    download="recording.webm"
+                  >
+                    Download
+                  </a>
+                </div>
               )}
             </div>
           </Card>
