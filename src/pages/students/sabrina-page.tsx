@@ -4,8 +4,11 @@ import { PageContainer, MainContent, Card, Section } from "@/components/layout";
 import { Logo } from "@/components/logo";
 import { H1, H2, P } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
+import { useReactMediaRecorder } from "react-media-recorder";
 
 export function SabrinaPage() {
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({ audio: true });
   const navigate = useNavigate();
 
   const studentName = "Sabrina";
@@ -42,13 +45,22 @@ export function SabrinaPage() {
               student will build their own unique features on this page.
             </P>
             <P>Students can experiment with:</P>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
-              <li>Custom UI components</li>
-              <li>Interactive features</li>
-              <li>Data visualization</li>
-              <li>API integrations</li>
-              <li>And more!</li>
-            </ul>
+            <div className="flex flex-col gap-4">
+              <p>{status}</p>
+              <button
+                className="bg-blue-500 text-white p-2 rounded-md"
+                onClick={startRecording}
+              >
+                Start Recording
+              </button>
+              <button
+                className="bg-red-500 text-white p-2 rounded-md"
+                onClick={stopRecording}
+              >
+                Stop Recording
+              </button>
+              <audio src={mediaBlobUrl} controls />
+            </div>
           </Card>
         </Section>
       </MainContent>
