@@ -8,7 +8,12 @@ import { useReactMediaRecorder } from "react-media-recorder";
 
 export function SabrinaPage() {
   const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({ audio: true });
+    useReactMediaRecorder({
+      audio: true,
+      mediaRecorderOptions: {
+        mimeType: "audio/webm",
+      },
+    });
   const navigate = useNavigate();
 
   const studentName = "Sabrina";
@@ -48,18 +53,25 @@ export function SabrinaPage() {
             <div className="flex flex-col gap-4">
               <p>{status}</p>
               <button
-                className="bg-blue-500 text-white p-2 rounded-md"
+                className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
                 onClick={startRecording}
+                disabled={status === "recording"}
               >
                 Start Recording
               </button>
               <button
-                className="bg-red-500 text-white p-2 rounded-md"
+                className="bg-red-500 text-white p-2 rounded-md disabled:opacity-50"
                 onClick={stopRecording}
+                disabled={status !== "recording"}
               >
                 Stop Recording
               </button>
               <audio src={mediaBlobUrl} controls />
+              {mediaBlobUrl && (
+                <a href={mediaBlobUrl} download="recording.webm">
+                  Download
+                </a>
+              )}
             </div>
           </Card>
         </Section>
