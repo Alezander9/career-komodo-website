@@ -18,4 +18,12 @@ export default defineSchema({
     userName: v.string(),
     createdAt: v.number(),
   }).index("by_user_id", ["userId"]),
+
+  audioFiles: defineTable({
+    userId: v.id("users"),
+    fileName: v.string(),
+    mimeType: v.string(),
+    storageId: v.string(),
+    createdAt: v.number(),
+  }).index("by_user_id", ["userId"]),
 });

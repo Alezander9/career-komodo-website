@@ -5,6 +5,9 @@ import { Logo } from "@/components/logo";
 import { H1, H2, P } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { useReactMediaRecorder } from "react-media-recorder";
+import { useAction, useMutation } from "convex/react";
+import { api } from "@convex/_generated/api";
+import { useEffect, useState } from "react";
 
 export function SabrinaPage() {
   const { status, startRecording, stopRecording, mediaBlobUrl } =
@@ -14,9 +17,41 @@ export function SabrinaPage() {
         mimeType: "audio/webm",
       },
     });
+  const transcribeAudio = useAction(api.actions.audioToText);
+  const generateUploadUrl = useMutation(api.mutations.generateUploadUrl);
+  const [transcription, setTranscription] = useState("");
   const navigate = useNavigate();
 
   const studentName = "Sabrina";
+
+  const handleTranscription = async (mediaBlobUrl: string) => {
+    console.log("Starting transcription...");
+    const audioBlob = await fetch(mediaBlobUrl).then((r) => r.blob());
+
+    const postUrl = await generateUploadUrl();
+
+    const result = await fetch(postUrl, {
+      method: "POST",
+      headers: { "Content-Type": "audio/webm" },
+      body: audioBlob,
+    });
+    const { storageId } = await result.json();
+
+    const recievedTranscription = await transcribeAudio({
+      storageId,
+      fileName: "audio.webm",
+    });
+
+    console.log("Transcription:", recievedTranscription.text);
+    setTranscription(recievedTranscription.text);
+  };
+
+  useEffect(() => {
+    if (mediaBlobUrl) {
+      console.log("Media blob URL:", mediaBlobUrl);
+      handleTranscription(mediaBlobUrl);
+    }
+  }, [mediaBlobUrl]);
 
   return (
     <PageContainer>
@@ -49,9 +84,10 @@ export function SabrinaPage() {
               This is a placeholder page for {studentName}'s content. Each
               student will build their own unique features on this page.
             </P>
-            <P>Students can experiment with:</P>
             <div className="flex flex-col gap-4">
-              <p>{status}</p>
+              <p>
+                <span className="font-bold">Recording Status:</span> {status}
+              </p>
               {status !== "recording" && (
                 <button
                   className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
@@ -64,7 +100,9 @@ export function SabrinaPage() {
               {status === "recording" && (
                 <button
                   className="bg-red-500 text-white p-2 rounded-md disabled:opacity-50"
-                  onClick={stopRecording}
+                  onClick={() => {
+                    stopRecording();
+                  }}
                   disabled={status !== "recording"}
                 >
                   Stop Recording
@@ -80,6 +118,12 @@ export function SabrinaPage() {
                   >
                     Download
                   </a>
+                </div>
+              )}
+              {transcription && (
+                <div className="flex flex-col gap-2">
+                  <p className="font-bold">Transcription:</p>
+                  <p>{transcription}</p>
                 </div>
               )}
             </div>
