@@ -4,7 +4,7 @@ A platform for high schoolers where a conversational AI agent (Career Komodo) te
 
 ## Project Overview
 
-This project is a collaborative effort by Stanford first-year undergraduates as part of the intro to website design course. The website features:
+This project is a collaborative effort by Stanford undergraduates as part of the intro to website design course. The website features:
 
 - A modern, space-themed dark UI
 - Authentication with Clerk
@@ -114,6 +114,38 @@ The project is configured for deployment on Vercel:
    - `VITE_CONVEX_URL`
    - `VITE_CLERK_PUBLISHABLE_KEY`
 3. Deploy!
+
+## Testing the Chatbot Backend
+
+There are two ways to test the chatbot backend:
+
+1. **Direct API Test** (`/test` or `/claude-test` route):
+   - Navigate to `/test` or `/claude-test` in your browser
+   - Use the test interface to directly interact with the Claude API
+   - Enter a prompt and click "Send to Claude" to test the API response
+   - This helps verify that the Claude API integration is working properly
+
+2. **Main Chat Interface** (`/home` route):
+   - Navigate to `/home` in your browser
+   - Use the global chat interface to send messages
+   - Messages are stored in the Convex database and can be monitored in real-time
+
+### Monitoring and Debugging
+
+1. **Using the Convex Dashboard**:
+   ```bash
+   npx convex dashboard
+   ```
+   This will open the Convex dashboard where you can:
+   - Monitor message storage in the database
+   - View function logs in real-time
+   - Check environment variables (ensure `ANTHROPIC_API_KEY` is set)
+   - Debug any backend issues
+
+2. **Common Issues**:
+   - If messages aren't being sent/received, check the browser console for errors
+   - Verify the Anthropic API key is properly set in Convex environment variables
+   - Look for any error messages in the Convex function logs
 
 ## Resources
 

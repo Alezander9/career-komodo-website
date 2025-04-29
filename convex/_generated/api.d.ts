@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as mutations from "../mutations.js";
+import type * as nodejsactions from "../nodejsactions.js";
 import type * as queries from "../queries.js";
 
 /**
@@ -26,6 +27,7 @@ import type * as queries from "../queries.js";
  */
 declare const fullApi: ApiFromModules<{
   mutations: typeof mutations;
+  nodejsactions: typeof nodejsactions;
   queries: typeof queries;
 }>;
 export declare const api: FilterApi<
