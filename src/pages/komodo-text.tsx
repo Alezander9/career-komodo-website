@@ -5,6 +5,8 @@ import { Logo } from "@/components/logo";
 import { H1, H2, P } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from 'react';
+import { Input } from "../components/ui/input";
+import { StarBackground } from "../components/StarBackground";
 
 const useTypewriter = (text: string, speed = 50) => {
   const [displayText, setDisplayText] = useState('');
@@ -41,56 +43,73 @@ export function KomodoTextPage() {
     //typewriter effect for the text? 
 
   const navigate = useNavigate();
+  const [userInput, setUserInput] = useState('');
+  const [komodoResponse, setKomodoResponse] = useState("Hi there! I'm Komodo. How can I help you today?");
 
-  const studentName = "Komodo";
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Here you'll later add the logic to process the user input and generate Komodo's response
+    setUserInput('');
+  };
 
   return (
-
-
-    
-    <PageContainer>
-      <header className="border-b border p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Logo />
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/home")}
-            >
-              Back to Home
-            </Button>
-            <SignOutButton>
-              <Button variant="outline" size="sm">
-                Sign Out
+    <>
+      <StarBackground />
+      <PageContainer>
+        <header className="border-b border p-4">
+          <div className="container mx-auto flex justify-between items-center">
+            <Logo />
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/home")}
+              >
+                Back to Home
               </Button>
-            </SignOutButton>
+              <SignOutButton>
+                <Button variant="outline" size="sm">
+                  Sign Out
+                </Button>
+              </SignOutButton>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <MainContent>
-        <Section>
-          <H1 className="mb-6">{studentName}'s Page</H1>
-          <Card>
-            <H2 className="mb-4">Welcome to {studentName}'s Page</H2>
-            <Typewriter text="This is Working Fine !!" speed={50}/>
-            <P className="mb-6">
-              This is a placeholder page for {studentName}'s content. Each
-              student will build their own unique features on this page.
-            </P>
-            <P>Students can experiment with:</P>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
-              <li>Custom UI components</li>
-              <li>Interactive features</li>
-              <li>Data visualization</li>
-              <li>API integrations</li>
-              <li>And more!</li>
-            </ul>
-          </Card>
-        </Section>
-      </MainContent>
-    </PageContainer>
+        <MainContent>
+          <Section>
+            <H1 className="mb-6">Chat with Komodo</H1>
+            
+            {/* Komodo's response section with image */}
+            <Card className="mb-8 shadow-none border-none">
+              <div className="flex items-start gap-4">
+                <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                  <span className="text-gray-500">🦎</span>
+                </div>
+                <div className="flex-1">
+                  <H2 className="mb-4">Komodo says:</H2>
+                  <Typewriter text={komodoResponse} speed={50}/>
+                </div>
+              </div>
+            </Card>
+
+            {/* User input section */}
+            <Card className="shadow-none border-none">
+              <form onSubmit={handleSubmit} className="flex gap-4">
+                <Input
+                  type="text"
+                  value={userInput}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUserInput(e.target.value)}
+                  placeholder="Type your message here..."
+                  className="flex-1"
+                />
+                <Button type="submit">Send</Button>
+              </form>
+            </Card>
+          </Section>
+        </MainContent>
+      </PageContainer>
+    </>
   );
 }
 

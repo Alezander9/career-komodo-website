@@ -34,22 +34,31 @@ export function SeymaPage() {
 
       <MainContent>
         <Section>
-          <H1 className="mb-6">{studentName}'s Page</H1>
-          <Card>
-            <H2 className="mb-4">Welcome to {studentName}'s Page</H2>
-            <P className="mb-6">
-              This is a placeholder page for {studentName}'s content. Each
-              student will build their own unique features on this page.
-            </P>
-            <P>Students can experiment with:</P>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
-              <li>Custom UI components</li>
-              <li>Interactive features</li>
-              <li>Data visualization</li>
-              <li>API integrations</li>
-              <li>And more!</li>
-            </ul>
-          </Card>
+          <H1 className="mb-6 text-center text-4xl font-bold">Your Record Store</H1>
+          <div className="grid grid-cols-2 gap-8">
+            {[...Array(3)].map((_, index) => (
+              <div key={index} className="flex flex-col items-center space-y-4">
+                <div
+                  className="w-48 h-48 bg-purple-500 rounded-lg shadow-lg hover:bg-purple-600 transition-colors duration-300 flex items-center justify-center text-white text-3xl cursor-pointer"
+                  onClick={() => alert(`Clicked square ${index + 1}!`)}
+                >
+                  {index + 1}
+                </div>
+                <div className="text-center">
+                  <h3 className="font-semibold text-lg mb-2">
+                    {index === 0 ? "Rock" :
+                     index === 1 ? "Pop" :
+                     "Turkish"}
+                  </h3>
+                  <p className="text-gray-600">
+                    {index === 0 ? "The Smiths • The Strokes • Fleetwood Mac" :
+                     index === 1 ? "Sabrina Carpenter • Gracie Abrams • Taylor Swift" :
+                     "Pinhani • Canozan • Dolu Kadehi Ters Tut"}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </Section>
       </MainContent>
     </PageContainer>

@@ -69,3 +69,18 @@ https://oklch.com
     opacity: 1;
   }
 }
+
+@keyframes twinkle {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.5);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
