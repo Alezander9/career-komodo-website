@@ -18,6 +18,7 @@ import { KomodoTextPage } from "./pages/komodo-text";
 import { LoadingScreen } from "./components/loading-screen";
 import { ClaudeTest } from "./components/ClaudeTest";
 
+
 // Student routes - one for each student with their component
 const studentRoutes = [
   { path: "/sabrina", name: "Sabrina", component: SabrinaPage },
