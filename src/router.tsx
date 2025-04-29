@@ -13,6 +13,7 @@ import { MichellePage } from "./pages/students/michelle-page";
 import { MariemPage } from "./pages/students/mariem-page";
 import { SeymaPage } from "./pages/students/seyma-page";
 import { KatPage } from "./pages/students/kat-page";
+import { KomodoTextPage } from "./pages/komodo-text";
 import { LoadingScreen } from "./components/loading-screen";
 
 // Student routes - one for each student with their component
@@ -23,6 +24,7 @@ const studentRoutes = [
   { path: "/mariem", name: "Mariem", component: MariemPage },
   { path: "/seyma", name: "Seyma", component: SeymaPage },
   { path: "/kat", name: "Kat", component: KatPage },
+  { path: "/komodo-text", name: "Komodo Text", component: KomodoTextPage },
 ];
 
 // Protected route component
