@@ -6,6 +6,7 @@ import {
 import { useConvexAuth } from "convex/react";
 import { LandingPage } from "./pages/landing-page";
 import { HomePage } from "./pages/home-page";
+import { TestPage } from "./pages/test-page";
 // Import individual student pages
 import { SabrinaPage } from "./pages/students/sabrina-page";
 import { RyanPage } from "./pages/students/ryan-page";
@@ -14,6 +15,7 @@ import { MariemPage } from "./pages/students/mariem-page";
 import { SeymaPage } from "./pages/students/seyma-page";
 import { KatPage } from "./pages/students/kat-page";
 import { LoadingScreen } from "./components/loading-screen";
+import { ClaudeTest } from "./components/ClaudeTest";
 
 // Student routes - one for each student with their component
 const studentRoutes = [
@@ -70,6 +72,22 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <HomePage studentRoutes={studentRoutes} />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/test",
+    element: (
+      <ProtectedRoute>
+        <TestPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/claude-test",
+    element: (
+      <ProtectedRoute>
+        <ClaudeTest />
       </ProtectedRoute>
     ),
   },
