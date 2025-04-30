@@ -1,4 +1,4 @@
-import { ClaudeTest } from "@/components/ClaudeTest";
+import { ClaudeTest } from "@/pages/ClaudeTest";
 import { PageContainer, MainContent, Section } from "@/components/layout";
 import { H1 } from "@/components/ui/typography";
 

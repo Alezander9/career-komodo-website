@@ -21,14 +21,14 @@ import {
   type ChatMessageProps,
 } from "@/components/chat-message";
 
-interface StudentRoute {
+interface FeatureRoute {
   path: string;
   name: string;
   component?: React.ComponentType<any>;
 }
 
 interface HomePageProps {
-  studentRoutes: StudentRoute[];
+  featureRoutes: FeatureRoute[];
 }
 
 // Define the message structure from the database
@@ -42,7 +42,7 @@ interface DbMessage {
   createdAt: number;
 }
 
-export function HomePage({ studentRoutes }: HomePageProps) {
+export function HomePage({ featureRoutes }: HomePageProps) {
   const { user } = useUser();
   const navigate = useNavigate();
   const createUser = useMutation(api.mutations.createUser);
@@ -120,19 +120,19 @@ export function HomePage({ studentRoutes }: HomePageProps) {
             <ChatInput onSendMessage={handleSendMessage} />
           </Card>
 
-          {/* Right Column - Student Pages */}
+          {/* Right Column - Features */}
           <Card>
-            <H3 className="mb-4">Student Pages</H3>
-            <P className="mb-6">Explore pages created by Stanford students:</P>
+            <H3 className="mb-4">Features</H3>
+            <P className="mb-6">Explore available features:</P>
 
             <div className="grid grid-cols-2 gap-4">
-              {studentRoutes.map((route) => (
+              {featureRoutes.map((route) => (
                 <Button
                   key={route.path}
                   onClick={() => navigate(route.path)}
                   className="w-full"
                 >
-                  {route.name}'s Page
+                  {route.name}
                 </Button>
               ))}
             </div>

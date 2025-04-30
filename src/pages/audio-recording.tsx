@@ -9,7 +9,7 @@ import { useAction, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { useEffect, useState } from "react";
 
-export function SabrinaPage() {
+export function AudioRecordingPage() {
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({
       audio: true,
@@ -21,8 +21,6 @@ export function SabrinaPage() {
   const generateUploadUrl = useMutation(api.mutations.generateUploadUrl);
   const [transcription, setTranscription] = useState("");
   const navigate = useNavigate();
-
-  const studentName = "Sabrina";
 
   const handleTranscription = async (mediaBlobUrl: string) => {
     console.log("Starting transcription...");
@@ -77,12 +75,11 @@ export function SabrinaPage() {
 
       <MainContent>
         <Section>
-          <H1 className="mb-6">{studentName}'s Page</H1>
+          <H1 className="mb-6">Audio Recording & Transcription</H1>
           <Card>
-            <H2 className="mb-4">Welcome to {studentName}'s Page</H2>
+            <H2 className="mb-4">Record and Transcribe Audio</H2>
             <P className="mb-6">
-              This is a placeholder page for {studentName}'s content. Each
-              student will build their own unique features on this page.
+              Record audio and get an instant transcription using AI. Perfect for note-taking and documentation.
             </P>
             <div className="flex flex-col gap-4">
               <p>
@@ -132,4 +129,4 @@ export function SabrinaPage() {
       </MainContent>
     </PageContainer>
   );
-}
+} 

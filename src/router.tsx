@@ -7,27 +7,18 @@ import { useConvexAuth } from "convex/react";
 import { LandingPage } from "./pages/landing-page";
 import { HomePage } from "./pages/home-page";
 import { TestPage } from "./pages/test-page";
-// Import individual student pages
-import { SabrinaPage } from "./pages/students/sabrina-page";
-import { RyanPage } from "./pages/students/ryan-page";
-import { MichellePage } from "./pages/students/michelle-page";
-import { MariemPage } from "./pages/students/mariem-page";
-import { SeymaPage } from "./pages/students/seyma-page";
-import { KatPage } from "./pages/students/kat-page";
+import { AudioRecordingPage } from "./pages/audio-recording";
 import { KomodoTextPage } from "./pages/komodo-text";
 import { LoadingScreen } from "./components/loading-screen";
-import { ClaudeTest } from "./components/ClaudeTest";
+import { ClaudeTest } from "./pages/ClaudeTest";
+import { StarMapPage } from "./pages/starmap";
 
-
-// Student routes - one for each student with their component
-const studentRoutes = [
-  { path: "/sabrina", name: "Sabrina", component: SabrinaPage },
-  { path: "/ryan", name: "Ryan", component: RyanPage },
-  { path: "/michelle", name: "Michelle", component: MichellePage },
-  { path: "/mariem", name: "Mariem", component: MariemPage },
-  { path: "/seyma", name: "Seyma", component: SeymaPage },
-  { path: "/kat", name: "Kat", component: KatPage },
+// Feature routes
+const featureRoutes = [
+  { path: "/audio-recording", name: "Audio Recording", component: AudioRecordingPage },
   { path: "/komodo-text", name: "Komodo Text", component: KomodoTextPage },
+  { path: "/starmap", name: "Star Map", component: StarMapPage },
+  { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
 ];
 
 // Protected route component
@@ -74,7 +65,7 @@ const router = createBrowserRouter([
     path: "/home",
     element: (
       <ProtectedRoute>
-        <HomePage studentRoutes={studentRoutes} />
+        <HomePage featureRoutes={featureRoutes} />
       </ProtectedRoute>
     ),
   },
@@ -86,15 +77,7 @@ const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: "/claude-test",
-    element: (
-      <ProtectedRoute>
-        <ClaudeTest />
-      </ProtectedRoute>
-    ),
-  },
-  ...studentRoutes.map((route) => ({
+  ...featureRoutes.map((route) => ({
     path: route.path,
     element: (
       <ProtectedRoute>
