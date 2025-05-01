@@ -12,6 +12,7 @@ import { KomodoTextPage } from "./pages/komodo-text";
 import { LoadingScreen } from "./components/loading-screen";
 import { ClaudeTest } from "./pages/ClaudeTest";
 import { StarMapPage } from "./pages/starmap";
+import { MariemLandingPage } from "./pages/mariem-landing";
 
 // Feature routes
 const featureRoutes = [
@@ -20,6 +21,7 @@ const featureRoutes = [
   { path: "/starmap", name: "Star Map", component: StarMapPage },
   { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
   { path: "/welcome", name: "Welcome Page", component: LandingPage },
+  { path: "/mariem-landing", name: "Mariem's Landing", component: MariemLandingPage },
 ];
 
 // Protected route component
