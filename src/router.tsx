@@ -19,6 +19,7 @@ const featureRoutes = [
   { path: "/komodo-text", name: "Komodo Text", component: KomodoTextPage },
   { path: "/starmap", name: "Star Map", component: StarMapPage },
   { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
+  { path: "/welcome", name: "Welcome Page", component: LandingPage },
 ];
 
 // Protected route component

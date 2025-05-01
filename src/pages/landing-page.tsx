@@ -1,30 +1,72 @@
 import { SignInButton } from "@clerk/clerk-react";
-import { SpaceBackground } from "@/components/layout";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
+import { SpaceBackground, PageContainer, MainContent } from "@/components/layout";
 import { Logo } from "@/components/logo";
 import { H1, Lead } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 
 export function LandingPage() {
+  const { isSignedIn } = useUser();
+  const navigate = useNavigate();
+
   return (
-    <SpaceBackground>
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
-        <div className="animate-float mb-6">
-          <Logo size="lg" />
+    <PageContainer>
+      <header className="border-b border p-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <Logo />
+          <div className="flex items-center gap-4">
+            {isSignedIn ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/home")}
+              >
+                Back to Home
+              </Button>
+            ) : (
+              <SignInButton mode="modal">
+                <Button variant="outline" size="sm">
+                  Sign In
+                </Button>
+              </SignInButton>
+            )}
+          </div>
         </div>
+      </header>
 
-        <H1 className="mb-4">Welcome to Career Komodo</H1>
+      <MainContent>
+        <SpaceBackground>
+          <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 text-center">
+            <div className="animate-float mb-6">
+              <Logo size="lg" />
+            </div>
 
-        <Lead className="max-w-2xl mb-8">
-          Explore career paths and alternatives to four-year college education
-          with our AI-powered guide.
-        </Lead>
+            <H1 className="mb-4">Welcome to Career Komodo</H1>
 
-        <SignInButton mode="modal">
-          <Button size="lg" className="animate-pulse-slow">
-            Get Started
-          </Button>
-        </SignInButton>
-      </div>
-    </SpaceBackground>
+            <Lead className="max-w-2xl mb-8">
+              Explore career paths and alternatives to four-year college education
+              with our AI-powered guide.
+            </Lead>
+
+            {!isSignedIn ? (
+              <SignInButton mode="modal">
+                <Button size="lg" className="animate-pulse-slow">
+                  Get Started
+                </Button>
+              </SignInButton>
+            ) : (
+              <Button 
+                size="lg" 
+                className="animate-pulse-slow"
+                onClick={() => navigate("/home")}
+              >
+                Return to Dashboard
+              </Button>
+            )}
+          </div>
+        </SpaceBackground>
+      </MainContent>
+    </PageContainer>
   );
 }
