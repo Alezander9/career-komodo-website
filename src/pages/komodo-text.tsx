@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from 'react';
 import { Input } from "../components/ui/input";
 import { StarBackground } from "../components/StarBackground";
+import { KomodoImage } from "../components/KomodoImage";
 
 const useTypewriter = (text: string, speed = 50) => {
   const [displayText, setDisplayText] = useState('');
@@ -84,7 +85,7 @@ export function KomodoTextPage() {
             <Card className="mb-8 shadow-none border-none">
               <div className="flex items-start gap-4">
                 <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                  <span className="text-gray-500">🦎</span>
+                  <KomodoImage />
                 </div>
                 <div className="flex-1">
                   <H2 className="mb-4">Komodo says:</H2>
