@@ -13,7 +13,9 @@ import { LoadingScreen } from "./components/loading-screen";
 import { ClaudeTest } from "./pages/ClaudeTest";
 import { StarMapPage } from "./pages/starmap";
 import { MariemLandingPage } from "./pages/mariem-landing";
-
+import { OpportunitiesPage } from "./pages/opportunities-page";
+import { AboutUsPage } from "./pages/about-us";
+import { TutorialPage } from "./pages/tutorial-page";
 // Feature routes
 const featureRoutes = [
   { path: "/audio-recording", name: "Audio Recording", component: AudioRecordingPage },
@@ -22,6 +24,9 @@ const featureRoutes = [
   { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
   { path: "/welcome", name: "Welcome Page", component: LandingPage },
   { path: "/mariem-landing", name: "Mariem's Landing", component: MariemLandingPage },
+  { path: "/opportunities-page", name: "Opportunities", component: OpportunitiesPage },
+  { path: "/about-us", name: "About Us", component: AboutUsPage },
+  { path: "/tutorial", name: "Tutorial", component: TutorialPage },
 ];
 
 // Protected route component
