@@ -16,6 +16,9 @@ import { MariemLandingPage } from "./pages/mariem-landing";
 import { OpportunitiesPage } from "./pages/opportunities-page";
 import { AboutUsPage } from "./pages/about-us";
 import { TutorialPage } from "./pages/tutorial-page";
+import { StarMapBackgroundPage } from "./pages/star-map-background";
+import { YourStarmapLoadingPage } from "./pages/your-starmap-loading";
+
 // Feature routes
 const featureRoutes = [
   { path: "/audio-recording", name: "Audio Recording", component: AudioRecordingPage },
@@ -27,6 +30,8 @@ const featureRoutes = [
   { path: "/opportunities-page", name: "Opportunities", component: OpportunitiesPage },
   { path: "/about-us", name: "About Us", component: AboutUsPage },
   { path: "/tutorial", name: "Tutorial", component: TutorialPage },
+  { path: "/star-map-background", name: "Star Map Background", component: StarMapBackgroundPage },
+  { path: "/your-starmap-loading", name: "Starmap Loading", component: YourStarmapLoadingPage },
 ];
 
 // Protected route component
