@@ -13,15 +13,26 @@ import { LoadingScreen } from "./components/loading-screen";
 import { ClaudeTest } from "./pages/ClaudeTest";
 import { StarMapPage } from "./pages/starmap";
 import { MariemLandingPage } from "./pages/mariem-landing";
+import { AllChatsPage } from "./pages/chat-test";
+import { Chat } from "./pages/chat";
 
 // Feature routes
 const featureRoutes = [
-  { path: "/audio-recording", name: "Audio Recording", component: AudioRecordingPage },
+  { path: "/chats", name: "Chats", component: AllChatsPage },
+  {
+    path: "/audio-recording",
+    name: "Audio Recording",
+    component: AudioRecordingPage,
+  },
   { path: "/komodo-text", name: "Komodo Text", component: KomodoTextPage },
   { path: "/starmap", name: "Star Map", component: StarMapPage },
   { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
   { path: "/welcome", name: "Welcome Page", component: LandingPage },
-  { path: "/mariem-landing", name: "Mariem's Landing", component: MariemLandingPage },
+  {
+    path: "/mariem-landing",
+    name: "Mariem's Landing",
+    component: MariemLandingPage,
+  },
 ];
 
 // Protected route component
@@ -77,6 +88,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <TestPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/chat/:chatId",
+    element: (
+      <ProtectedRoute>
+        <Chat />
       </ProtectedRoute>
     ),
   },
