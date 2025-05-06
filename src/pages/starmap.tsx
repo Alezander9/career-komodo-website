@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { PageContainer, MainContent } from "@/components/layout";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import { StarBackground } from "../components/StarBackground";
 
 interface NodeType {
   id: string;
@@ -75,73 +76,76 @@ export function StarMapPage() {
       </header>
 
       <MainContent>
-        <div style={{ height: 600, background: "#000", borderRadius: 12, margin: "2rem 0", position: "relative" }}>
-          <ForceGraph3D
-            graphData={graphData}
-            backgroundColor="#000"
-            nodeColor={() => "#fff"}
-            linkColor={() => "#fff"}
-            nodeThreeObject={(node: NodeType) => {
-              const group = new THREE.Group();
+        <div style={{ position: 'relative', height: 600, borderRadius: 12, margin: '2rem 0' }}>
+          <StarBackground />
+          <div style={{ position: 'relative', zIndex: 1, height: '100%' }}>
+            <ForceGraph3D
+              graphData={graphData}
+              backgroundColor="transparent"
+              nodeColor={() => "#fff"}
+              linkColor={() => "#fff"}
+              nodeThreeObject={(node: NodeType) => {
+                const group = new THREE.Group();
 
-              const geometry = new THREE.SphereGeometry(4, 16, 16);
-              const material = new THREE.MeshBasicMaterial({
-                color: 0xffffff,
-                transparent: true,
-                opacity: 0.95
-              });
-              const sphere = new THREE.Mesh(geometry, material);
+                const geometry = new THREE.SphereGeometry(4, 16, 16);
+                const material = new THREE.MeshBasicMaterial({
+                  color: 0xffffff,
+                  transparent: true,
+                  opacity: 0.95
+                });
+                const sphere = new THREE.Mesh(geometry, material);
 
-              const glowMaterial = new THREE.MeshBasicMaterial({
-                color: 0x88ccff,
-                transparent: true,
-                opacity: 0.25
-              });
-              const glow = new THREE.Mesh(
-                new THREE.SphereGeometry(8, 16, 16),
-                glowMaterial
-              );
+                const glowMaterial = new THREE.MeshBasicMaterial({
+                  color: 0x88ccff,
+                  transparent: true,
+                  opacity: 0.25
+                });
+                const glow = new THREE.Mesh(
+                  new THREE.SphereGeometry(8, 16, 16),
+                  glowMaterial
+                );
 
-              group.add(glow);
-              group.add(sphere);
-              return group;
-            }}
-            onNodeClick={setSelectedStar}
-            enableNodeDrag={false}
-          />
-          {selectedStar && (
-            <div
-              style={{
-                position: "absolute",
-                left: "50%",
-                top: "10%",
-                transform: "translate(-50%, 0)",
-                background: "rgba(0,0,0,0.85)",
-                color: "#fff",
-                border: "1px solid #fff",
-                borderRadius: 8,
-                padding: 16,
-                zIndex: 10,
-                minWidth: 200
+                group.add(glow);
+                group.add(sphere);
+                return group;
               }}
-            >
-              <strong>Star: {selectedStar.id}</strong>
-              <br />
-              <button
+              onNodeClick={setSelectedStar}
+              enableNodeDrag={false}
+            />
+            {selectedStar && (
+              <div
                 style={{
-                  marginTop: 8,
-                  background: "#222",
+                  position: "absolute",
+                  left: "50%",
+                  top: "10%",
+                  transform: "translate(-50%, 0)",
+                  background: "rgba(0,0,0,0.85)",
                   color: "#fff",
-                  border: "none",
-                  borderRadius: 4,
-                  padding: "4px 12px"
+                  border: "1px solid #fff",
+                  borderRadius: 8,
+                  padding: 16,
+                  zIndex: 10,
+                  minWidth: 200
                 }}
-                onClick={() => setSelectedStar(null)}
               >
-                Close
-              </button>
-            </div>
-          )}
+                <strong>Star: {selectedStar.id}</strong>
+                <br />
+                <button
+                  style={{
+                    marginTop: 8,
+                    background: "#222",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 4,
+                    padding: "4px 12px"
+                  }}
+                  onClick={() => setSelectedStar(null)}
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </MainContent>
     </PageContainer>

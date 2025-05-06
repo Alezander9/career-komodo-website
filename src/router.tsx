@@ -13,6 +13,8 @@ import { LoadingScreen } from "./components/loading-screen";
 import { ClaudeTest } from "./pages/ClaudeTest";
 import { StarMapPage } from "./pages/starmap";
 import { MariemLandingPage } from "./pages/mariem-landing";
+import { StarMapBackgroundPage } from "./pages/star-map-background";
+import { YourStarmapLoadingPage } from "./pages/your-starmap-loading";
 
 // Feature routes
 const featureRoutes = [
@@ -22,6 +24,8 @@ const featureRoutes = [
   { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
   { path: "/welcome", name: "Welcome Page", component: LandingPage },
   { path: "/mariem-landing", name: "Mariem's Landing", component: MariemLandingPage },
+  { path: "/star-map-background", name: "Star Map Background", component: StarMapBackgroundPage },
+  { path: "/your-starmap-loading", name: "Starmap Loading", component: YourStarmapLoadingPage },
 ];
 
 // Protected route component
