@@ -18,10 +18,17 @@ import { AboutUsPage } from "./pages/about-us";
 import { TutorialPage } from "./pages/tutorial-page";
 import { StarMapBackgroundPage } from "./pages/star-map-background";
 import { YourStarmapLoadingPage } from "./pages/your-starmap-loading";
+import { AllChatsPage } from "./pages/chat-test";
+import { Chat } from "./pages/chat";
 
 // Feature routes
 const featureRoutes = [
-  { path: "/audio-recording", name: "Audio Recording", component: AudioRecordingPage },
+  { path: "/chats", name: "Chats", component: AllChatsPage },
+  {
+    path: "/audio-recording",
+    name: "Audio Recording",
+    component: AudioRecordingPage,
+  },
   { path: "/komodo-text", name: "Komodo Text", component: KomodoTextPage },
   { path: "/starmap", name: "Star Map", component: StarMapPage },
   { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
@@ -87,6 +94,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <TestPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/chat/:chatId",
+    element: (
+      <ProtectedRoute>
+        <Chat />
       </ProtectedRoute>
     ),
   },

@@ -26,4 +26,15 @@ export default defineSchema({
     storageId: v.string(),
     createdAt: v.number(),
   }).index("by_user_id", ["userId"]),
+
+  chats: defineTable({
+    userId: v.id("users"),
+    createdAt: v.number(),
+    messages: v.array(
+      v.object({
+        sender: v.union(v.literal("user"), v.literal("komodo")),
+        message: v.string(),
+      })
+    ),
+  }).index("by_user_id", ["userId"]),
 });

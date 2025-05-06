@@ -31,6 +31,42 @@ export const getMessages = query({
   },
 });
 
+export const getChats = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get user ID
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const chats = await ctx.db
+      .query("chats")
+      .withIndex("by_user_id", (q) => q.eq("userId", user._id))
+      .order("desc")
+      .collect();
+
+    return chats;
+  },
+});
+
+export const getChat = query({
+  args: { chatId: v.id("chats") },
+  handler: async (ctx, args) => {
+    const chat = await ctx.db.get(args.chatId);
+    return chat;
+  },
+});
+
 // New query to get all messages for the global chat
 export const getAllMessages = query({
   args: {},
