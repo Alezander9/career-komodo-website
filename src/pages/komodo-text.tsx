@@ -6,7 +6,6 @@ import { H1, H2, P } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from 'react';
 import { Input } from "../components/ui/input";
-import { StarBackground } from "../components/StarBackground";
 import { KomodoImage } from "../components/KomodoImage";
 
 const useTypewriter = (text: string, speed = 50) => {
@@ -55,7 +54,6 @@ export function KomodoTextPage() {
 
   return (
     <>
-      <StarBackground />
       <PageContainer>
         <header className="border-b border p-4">
           <div className="container mx-auto flex justify-between items-center">
