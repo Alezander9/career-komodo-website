@@ -84,7 +84,7 @@ export function KomodoTextPage() {
             {/* Komodo's response section with image */}
             <Card className="mb-8 shadow-none border-none">
               <div className="flex items-start gap-4">
-                <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                <div className="w-24 h-24 bg-black rounded-lg flex items-center justify-center">
                   <KomodoImage />
                 </div>
                 <div className="flex-1">
