@@ -4,35 +4,50 @@ type KomodoState = 'open' | 'closed' | 'blink';
 
 export function KomodoImage() {
   const [currentState, setCurrentState] = useState<KomodoState>('open');
+  const [isQuickBlink, setIsQuickBlink] = useState(true);
 
   useEffect(() => {
-    // Function to trigger a blink sequence
-    const triggerBlinkSequence = () => {
-      // Blink sequence: open -> blink -> closed -> open
+    // Function to trigger quick blink sequence
+    const triggerQuickBlink = () => {
+      // Sequence: open -> blink -> open
       setCurrentState('blink');
       setTimeout(() => {
-        setCurrentState('closed');
-        setTimeout(() => {
-          setCurrentState('open');
-        }, 100); // Keep eyes closed for 100ms
-      }, 100); // Show blink frame for 100ms
+        setCurrentState('open');
+      }, 150); // Blink frame for 150ms
     };
 
-    // Function to schedule the next blink
-    const scheduleNextBlink = () => {
-      // Random time between 2 and 8 seconds
-      const nextBlinkIn = Math.random() * 6000 + 2000;
-      return setTimeout(triggerBlinkSequence, nextBlinkIn);
+    // Function to trigger closed eyes sequence
+    const triggerClosedEyes = () => {
+      // Sequence: open -> closed -> open
+      setCurrentState('closed');
+      setTimeout(() => {
+        setCurrentState('open');
+      }, 300); // Keep eyes closed for 300ms
     };
 
-    // Start the blink cycle
-    let blinkTimer = scheduleNextBlink();
+    // Function to schedule the next animation
+    const scheduleNextAnimation = () => {
+      // Random time between 2 and 6 seconds
+      const nextAnimationIn = Math.random() * 4000 + 2000;
+      return setTimeout(() => {
+        if (isQuickBlink) {
+          triggerQuickBlink();
+        } else {
+          triggerClosedEyes();
+        }
+        setIsQuickBlink(!isQuickBlink); // Toggle for next time
+        blinkTimer = scheduleNextAnimation(); // Schedule next animation
+      }, nextAnimationIn);
+    };
+
+    // Start the animation cycle
+    let blinkTimer = scheduleNextAnimation();
 
     // Cleanup
     return () => {
       clearTimeout(blinkTimer);
     };
-  }, []);
+  }, [isQuickBlink]);
 
   // Map state to image source
   const imageSource = {
