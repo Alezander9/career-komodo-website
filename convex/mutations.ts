@@ -74,3 +74,69 @@ export const createMessage = mutation({
     return messageId;
   },
 });
+
+export const createChat = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get user ID
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Create message
+    const chatId = await ctx.db.insert("chats", {
+      userId: user._id,
+      createdAt: Date.now(),
+      messages: [],
+    });
+
+    return chatId;
+  },
+});
+
+export const addMessageToChat = mutation({
+  args: {
+    chatId: v.id("chats"),
+    content: v.string(),
+    sender: v.union(v.literal("user"), v.literal("komodo")),
+  },
+  handler: async (ctx, args) => {
+    const { chatId, content, sender } = args;
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get user ID
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Create message
+    const chat = await ctx.db.get(chatId);
+    if (!chat) {
+      throw new Error("Chat not found");
+    }
+
+    const updatedChat = await ctx.db.patch(chatId, {
+      messages: [...chat.messages, { sender: sender, message: content }],
+    });
+
+    return updatedChat;
+  },
+});

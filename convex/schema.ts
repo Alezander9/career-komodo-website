@@ -32,7 +32,7 @@ export default defineSchema({
     createdAt: v.number(),
     messages: v.array(
       v.object({
-        user: v.string(),
+        sender: v.union(v.literal("user"), v.literal("komodo")),
         message: v.string(),
       })
     ),
