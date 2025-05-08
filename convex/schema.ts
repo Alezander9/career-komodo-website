@@ -34,6 +34,7 @@ export default defineSchema({
       v.object({
         sender: v.union(v.literal("user"), v.literal("komodo")),
         message: v.string(),
+        storageId: v.id("_storage"),
       })
     ),
   }).index("by_user_id", ["userId"]),
