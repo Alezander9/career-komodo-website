@@ -1,7 +1,13 @@
 import { Router } from "./router";
+import Navigation from "./components/ui/navigation";
 
 function App() {
-  return <Router />;
+  return (
+    <>
+      <Navigation />
+      <Router />
+    </>
+  );
 }
 
 export default App;
