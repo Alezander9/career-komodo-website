@@ -38,6 +38,7 @@ export function AudioRecordingPage() {
     const recievedTranscription = await transcribeAudio({
       storageId,
       fileName: "audio.webm",
+      deleteAudio: true,
     });
 
     console.log("Transcription:", recievedTranscription.text);
@@ -79,7 +80,8 @@ export function AudioRecordingPage() {
           <Card>
             <H2 className="mb-4">Record and Transcribe Audio</H2>
             <P className="mb-6">
-              Record audio and get an instant transcription using AI. Perfect for note-taking and documentation.
+              Record audio and get an instant transcription using AI. Perfect
+              for note-taking and documentation.
             </P>
             <div className="flex flex-col gap-4">
               <p>
@@ -129,4 +131,4 @@ export function AudioRecordingPage() {
       </MainContent>
     </PageContainer>
   );
-} 
+}

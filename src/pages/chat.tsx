@@ -1,9 +1,10 @@
-import { PageContainer, MainContent, Card, Section } from "@/components/layout";
+import { PageContainer, MainContent, Card } from "@/components/layout";
 import { H1 } from "@/components/ui/typography";
 import { api } from "@convex/_generated/api";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "convex/react";
-import { ChatMessageList, ChatInput } from "@/components/chat-message";
+import { ChatMessageList } from "@/components/chat-message";
+import { SpeechToText } from "@/components/SpeechToText";
 import { Id } from "@convex/_generated/dataModel";
 
 export function Chat() {
@@ -11,10 +12,17 @@ export function Chat() {
   const chat = useQuery(api.queries.getChat, { chatId: chatId as Id<"chats"> });
   const addMessage = useMutation(api.mutations.addMessageToChat);
 
-  const handleSendMessage = async (message: string) => {
+  const handleTranscription = async ({
+    text,
+    storageId,
+  }: {
+    text: string;
+    storageId: Id<"_storage">;
+  }) => {
     await addMessage({
       chatId: chatId as Id<"chats">,
-      content: message,
+      content: text,
+      storageId: storageId,
       sender: "user",
     });
   };
@@ -37,8 +45,7 @@ export function Chat() {
                 )}
               />
             </div>
-
-            <ChatInput onSendMessage={handleSendMessage} />
+            <SpeechToText onTranscription={handleTranscription} />
           </Card>
         )}
       </MainContent>

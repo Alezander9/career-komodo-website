@@ -1,13 +1,21 @@
 import { action } from "./_generated/server";
 import { v } from "convex/values";
 
+/**
+ * Transcribe audio to text using OpenAI's Whisper API
+ * @param storageId - The ID of the storage object containing the audio file
+ * @param fileName - The name of the audio file
+ * @param deleteAudio - Whether to delete the audio file from storage after transcription
+ * @returns a json object with the text property set to the transcribed text
+ */
 export const audioToText = action({
   args: {
     storageId: v.id("_storage"),
     fileName: v.string(),
+    deleteAudio: v.boolean(),
   },
   handler: async (ctx, args) => {
-    const { storageId, fileName } = args;
+    const { storageId, fileName, deleteAudio } = args;
 
     const audioUrl = await ctx.storage.getUrl(storageId);
     if (!audioUrl) {
@@ -32,7 +40,10 @@ export const audioToText = action({
       }
     );
     const data = (await openaiResponse.json()) as { text: string };
-    await ctx.storage.delete(storageId);
+
+    if (deleteAudio) {
+      await ctx.storage.delete(storageId);
+    }
 
     return { text: data.text };
   },
