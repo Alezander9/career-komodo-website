@@ -6,7 +6,6 @@ import * as THREE from "three";
 import { PageContainer, MainContent } from "@/components/layout";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { StarBackground } from "../components/StarBackground";
 
 interface NodeType {
   id: string;
@@ -153,18 +152,18 @@ export function StarMapPage() {
   useEffect(() => {
     const handleResize = () => {
       // Adjust header height if different in your app!
-      const headerHeight = 72; // Assuming header height is 72px
+      const headerHeight = 72;
       setDimensions({ width: window.innerWidth, height: window.innerHeight - headerHeight });
     };
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial call
+    handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Spinning camera logic
+  // Spinning camera logic: keep spinning as long as spinning is true
   const handleEngineTick = useCallback(() => {
     if (!fgRef.current || !spinning) return;
-    angleRef.current += 0.002; // keep incrementing
+    angleRef.current += 0.002; // keep incrementing forever
     const distance = 120;
     const angle = angleRef.current;
 
@@ -174,47 +173,43 @@ export function StarMapPage() {
         y: distance * 0.1 + 10 * Math.sin(angle * 0.7),
         z: distance * Math.cos(angle)
       },
-      { x: 0, y: 0, z: 0 }, // lookAt target
-      0 // transition duration
+      { x: 0, y: 0, z: 0 },
+      0
     );
   }, [spinning]);
 
-  // Stop spinning and reset camera
+  // When spinning stops, reset camera to default position smoothly
   useEffect(() => {
     if (!spinning && fgRef.current) {
       fgRef.current.cameraPosition(
-        { x: 0, y: 0, z: 120 }, // Default position
-        { x: 0, y: 0, z: 0 }, // lookAt target
-        1500 // transition duration
+        { x: 0, y: 0, z: 120 },
+        { x: 0, y: 0, z: 0 },
+        1500
       );
     }
   }, [spinning]);
 
-  // Stop spinning on click/touch in the map area
+  // Stop spinning on any click in the map area (except popup)
   const mapAreaRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!spinning) return;
-    const stopSpinning = (e: MouseEvent | TouchEvent) => {
+    const handleClick = (e: MouseEvent) => {
       if (
         mapAreaRef.current &&
         e.target instanceof Node &&
         mapAreaRef.current.contains(e.target) &&
-        !(e.target as HTMLElement).closest(".star-info-popup") // Don't stop if clicking the popup
+        !(e.target as HTMLElement).closest(".star-info-popup")
       ) {
         setSpinning(false);
       }
     };
-    window.addEventListener("mousedown", stopSpinning);
-    window.addEventListener("touchstart", stopSpinning); // Add touch support
-    return () => {
-      window.removeEventListener("mousedown", stopSpinning);
-      window.removeEventListener("touchstart", stopSpinning);
-    }
+    window.addEventListener("mousedown", handleClick);
+    return () => window.removeEventListener("mousedown", handleClick);
   }, [spinning]);
 
   return (
-    <div style={{ height: "100vh", width: "100vw", display: "flex", flexDirection: "column", overflow: "hidden", background: "#000" }}>
-      <header className="border-b border p-4" style={{ flexShrink: 0, background: "#000", zIndex: 10 /* Ensure header is above background */ }}>
+    <div style={{ height: "100vh", width: "100vw", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <header className="border-b border p-4" style={{ flexShrink: 0 }}>
         <div className="container mx-auto flex justify-between items-center">
           <Logo />
           <div className="flex items-center gap-4">
@@ -234,67 +229,60 @@ export function StarMapPage() {
           flexGrow: 1,
           minHeight: 0,
           position: "relative",
-          width: "100%", // Use 100% width of the container
-          overflow: "hidden" // Prevent scrollbars
+          width: "100vw",
+          background: "#000",
+          overflow: "hidden"
         }}
       >
-        {/* Star Background - Positioned absolutely to fill the container */}
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0 }}>
-          <StarBackground />
-        </div>
+        <ForceGraph3D
+          ref={fgRef}
+          width={dimensions.width}
+          height={dimensions.height}
+          graphData={graphData}
+          backgroundColor="#000"
+          nodeColor={node => {
+            if (startNodes.has(node.id)) return "green";
+            if (endNodes.has(node.id)) return "red";
+            return "#fff";
+          }}
+          linkColor={() => "#88ccff"}
+          nodeThreeObject={(node: NodeType) => {
+            const group = new THREE.Group();
 
-        {/* Force Graph - Positioned relatively within the container, above the background */}
-        <div style={{ position: 'relative', zIndex: 1, width: '100%', height: '100%' }}>
-          <ForceGraph3D
-            ref={fgRef}
-            width={dimensions.width}
-            height={dimensions.height}
-            graphData={graphData}
-            backgroundColor="transparent" // Make background transparent
-            nodeColor={node => {
-              if (startNodes.has(node.id)) return "green"; // Keep coloring from HEAD
-              if (endNodes.has(node.id)) return "red";   // Keep coloring from HEAD
-              return "#fff";
-            }}
-            linkColor={() => "#88ccff"}
-            nodeThreeObject={(node: NodeType) => { // Keep detailed node object from HEAD
-              const group = new THREE.Group();
+            let color = 0xffffff;
+            if (startNodes.has(node.id)) color = 0x51d6ff; // green
+            else if (endNodes.has(node.id)) color = 0xffd60a; // red
 
-              let color = 0xffffff;
-              if (startNodes.has(node.id)) color = 0x51d6ff; // green
-              else if (endNodes.has(node.id)) color = 0xffd60a; // red
+            const geometry = new THREE.SphereGeometry(4, 16, 16);
+            const material = new THREE.MeshBasicMaterial({
+              color,
+              transparent: true,
+              opacity: 0.95
+            });
+            const sphere = new THREE.Mesh(geometry, material);
 
-              const geometry = new THREE.SphereGeometry(4, 16, 16);
-              const material = new THREE.MeshBasicMaterial({
-                color,
-                transparent: true,
-                opacity: 0.95
-              });
-              const sphere = new THREE.Mesh(geometry, material);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+              color: 0x88ccff,
+              transparent: true,
+              opacity: 0.25
+            });
+            const glow = new THREE.Mesh(new THREE.SphereGeometry(8, 16, 16), glowMaterial);
 
-              const glowMaterial = new THREE.MeshBasicMaterial({
-                color: 0x88ccff,
-                transparent: true,
-                opacity: 0.25
-              });
-              const glow = new THREE.Mesh(new THREE.SphereGeometry(8, 16, 16), glowMaterial);
-
-              group.add(glow);
-              group.add(sphere);
-              return group;
-            }}
-            onNodeClick={setSelectedStar}
-            enableNodeDrag={false}
-            onEngineTick={handleEngineTick} // Keep spinning logic
-          />
-        </div>
+            group.add(glow);
+            group.add(sphere);
+            return group;
+          }}
+          onNodeClick={setSelectedStar}
+          enableNodeDrag={false}
+          onEngineTick={handleEngineTick}
+        />
 
         {/* Overlay text for vibes */}
         {spinning && (
           <div
             style={{
               position: "absolute",
-              top: "40%", // Adjust position as needed
+              top: "40%",
               left: "50%",
               transform: "translate(-50%, -50%)",
               color: "#fff",
@@ -302,20 +290,19 @@ export function StarMapPage() {
               fontWeight: "bold",
               pointerEvents: "none",
               userSelect: "none",
-              zIndex: 20, // Ensure text is above graph
+              zIndex: 20,
               fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-              whiteSpace: "nowrap",
-              textShadow: "0 0 8px rgba(255, 255, 255, 0.5)" // Add subtle glow
+              whiteSpace: "nowrap"
             }}
           >
             ✨ Spinning for vibes... ✨
           </div>
         )}
 
-        {/* Selected star info popup */}
+        {/* Selected star info */}
         {selectedStar && (
           <div
-            className="star-info-popup" // Added class for click detection
+            className="star-info-popup"
             style={{
               position: "absolute",
               left: "50%",
@@ -326,40 +313,32 @@ export function StarMapPage() {
               border: "1px solid #fff",
               borderRadius: 8,
               padding: 16,
-              zIndex: 30, // Ensure popup is above everything
+              zIndex: 30,
               minWidth: 240
             }}
           >
-            {/* Add null checks for selectedStar */}
-            {starData[selectedStar.id] ? (
-              <div>
-                <h2 style={{ fontSize: "1.2rem", marginBottom: 4 }}>
-                  {starData[selectedStar.id]?.label ?? `⭐ ${selectedStar.id}`}
-                </h2>
-                <p style={{ fontSize: "0.9rem" }}>
-                  {starData[selectedStar.id]?.description ?? "No description available."}
-                </p>
-                {starData[selectedStar.id]?.links && (
-                  <ul style={{ marginTop: 8 }}>
-                    {starData[selectedStar.id].links!.map((link, i) => (
-                      <li key={i}>
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ color: "#88ccff", fontSize: "0.85rem" }}
-                        >
-                          {link.text}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ) : (
-               // Fallback if starData for the selected ID is somehow missing
-               <p>Loading star details...</p>
-            )}
+            <div>
+              <h2 style={{ fontSize: "1.2rem", marginBottom: 4 }}>
+                {starData[selectedStar.id]?.label ?? `⭐ ${selectedStar.id}`}
+              </h2>
+              <p style={{ fontSize: "0.9rem" }}>{starData[selectedStar.id]?.description ?? "No description available."}</p>
+              {starData[selectedStar.id]?.links && (
+                <ul style={{ marginTop: 8 }}>
+                  {starData[selectedStar.id].links!.map((link, i) => (
+                    <li key={i}>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "#88ccff", fontSize: "0.85rem" }}
+                      >
+                        {link.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
             <button
               style={{
                 marginTop: 12,
