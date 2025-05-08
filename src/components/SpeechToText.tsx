@@ -21,7 +21,6 @@ export function SpeechToText({
     });
   const transcribeAudio = useAction(api.actions.audioToText);
   const generateUploadUrl = useMutation(api.mutations.generateUploadUrl);
-  const [transcription, setTranscription] = useState("");
 
   const handleTranscription = async (mediaBlobUrl: string) => {
     console.log("Starting transcription...");
@@ -43,7 +42,6 @@ export function SpeechToText({
     });
 
     console.log("Transcription:", recievedTranscription.text);
-    setTranscription(recievedTranscription.text);
     onTranscription({ text: recievedTranscription.text, storageId });
   };
 
@@ -89,12 +87,6 @@ export function SpeechToText({
           >
             Download
           </a>
-        </div>
-      )}
-      {transcription && (
-        <div className="flex flex-col gap-2">
-          <p className="font-bold">Transcription:</p>
-          <p>{transcription}</p>
         </div>
       )}
     </div>
