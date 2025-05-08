@@ -13,6 +13,8 @@ const buttonVariants = cva(
           "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-md hover:bg-[hsl(var(--primary))]/90 hover:shadow-lg transition-all duration-200",
         outline:
           "border-2 border-[hsl(var(--primary))]/70 bg-transparent text-[hsl(var(--primary))] shadow-sm hover:bg-[hsl(var(--primary))]/10 hover:shadow-md transition-all duration-200",
+        secondary:
+          "bg-[hsl(var(--secondary))] text-[hsl(var(--secondary-foreground))] hover:bg-[hsl(var(--secondary))]/80",
         disabled:
           "bg-[hsl(var(--muted))] text-[hsl(var(--muted-foreground))] cursor-not-allowed opacity-70",
       },
@@ -22,19 +24,29 @@ const buttonVariants = cva(
         lg: "h-12 rounded-md px-8 text-base",
         icon: "size-10 p-2",
       },
+      fullWidth: {
+        true: "w-full",
+        false: "",
+      },
+      loading: {
+        true: "relative text-transparent pointer-events-none",
+        false: "",
+      },
     },
     defaultVariants: {
       variant: "primary",
       size: "default",
+      fullWidth: false,
+      loading: false,
     },
   }
 );
 
-interface ButtonProps
-  extends React.ComponentProps<"button">,
-    VariantProps<typeof buttonVariants> {
+interface ButtonProps extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   isDisabled?: boolean;
+  fullWidth?: boolean;
+  loading?: boolean;
 }
 
 function Button({
@@ -44,22 +56,34 @@ function Button({
   asChild = false,
   isDisabled = false,
   disabled,
+  fullWidth = false,
+  loading = false,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : "button";
 
   // Apply disabled variant if isDisabled or disabled is true
   const actualVariant = isDisabled || disabled ? "disabled" : variant;
+  const isButtonDisabled = isDisabled || disabled || loading;
 
   return (
     <Comp
       data-slot="button"
       className={cn(
-        buttonVariants({ variant: actualVariant, size, className })
+        buttonVariants({ variant: actualVariant, size, fullWidth, loading, className })
       )}
-      disabled={isDisabled || disabled}
+      disabled={isButtonDisabled}
       {...props}
-    />
+    >
+      {loading && (
+        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <span className="block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+        </span>
+      )}
+      <span className={loading ? "invisible" : ""}>
+        {props.children}
+      </span>
+    </Comp>
   );
 }
 

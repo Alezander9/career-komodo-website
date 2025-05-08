@@ -87,58 +87,44 @@ export function HomePage({ featureRoutes }: HomePageProps) {
   };
 
   return (
-    <PageContainer>
-      <header className="border-b border p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Logo />
-          <SignOutButton>
-            <Button variant="outline" size="sm">
-              Sign Out
-            </Button>
-          </SignOutButton>
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Navbar */}
+      <header className="w-full border-b border bg-background/80 backdrop-blur sticky top-0 z-20">
+        <div className="container mx-auto flex items-center justify-between py-4 px-6">
+          <Logo size="md" />
+          <div className="flex items-center gap-4">
+            <SignOutButton>
+              <Button variant="outline" size="sm">
+                Sign Out
+              </Button>
+            </SignOutButton>
+          </div>
         </div>
       </header>
 
-      <MainContent>
-        <TwoColumnLayout>
-          {/* Left Column - Chat */}
-          <Card className="flex flex-col h-[70vh]">
-            <H3 className="mb-4">Global Chat Channel</H3>
-
-            <div className="flex-1 overflow-y-auto mb-4">
-              <ChatMessageList
-                messages={allMessages.map((msg: DbMessage) => ({
-                  content: msg.content,
-                  sender: msg.sender,
-                  timestamp: new Date(msg.createdAt),
-                  userName: getUserName(msg),
-                }))}
-              />
-              {isLoading && <KomodoTypingIndicator />}
-            </div>
-
-            <ChatInput onSendMessage={handleSendMessage} />
-          </Card>
-
-          {/* Right Column - Features */}
-          <Card>
-            <H3 className="mb-4">Features</H3>
-            <P className="mb-6">Explore available features:</P>
-
-            <div className="grid grid-cols-2 gap-4">
-              {featureRoutes.map((route) => (
-                <Button
-                  key={route.path}
-                  onClick={() => navigate(route.path)}
-                  className="w-full"
-                >
-                  {route.name}
-                </Button>
-              ))}
-            </div>
-          </Card>
-        </TwoColumnLayout>
-      </MainContent>
-    </PageContainer>
+      {/* Main Content: Big Buttons Grid */}
+      <main className="flex-1 flex flex-col items-center justify-center px-4">
+        <div className="max-w-2xl w-full text-center mb-10 mt-8">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight text-foreground">
+            Welcome, {user?.fullName || "Explorer"}!
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground mb-8">
+            What would you like to do today?
+          </p>
+        </div>
+        <div className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {featureRoutes.map((route) => (
+            <Button
+              key={route.path}
+              size="lg"
+              className="h-32 text-2xl font-semibold shadow-lg hover:scale-105 transition-transform duration-200"
+              onClick={() => navigate(route.path)}
+            >
+              {route.name}
+            </Button>
+          ))}
+        </div>
+      </main>
+    </div>
   );
 }
