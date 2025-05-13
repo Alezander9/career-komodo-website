@@ -108,7 +108,7 @@ export const addMessageToChat = mutation({
   args: {
     chatId: v.id("chats"),
     content: v.string(),
-    storageId: v.id("_storage"),
+    storageId: v.optional(v.id("_storage")),
     sender: v.union(v.literal("user"), v.literal("komodo")),
   },
   handler: async (ctx, args) => {

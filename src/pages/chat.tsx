@@ -2,15 +2,21 @@ import { PageContainer, MainContent, Card } from "@/components/layout";
 import { H1 } from "@/components/ui/typography";
 import { api } from "@convex/_generated/api";
 import { useParams } from "react-router-dom";
-import { useMutation, useQuery } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { ChatMessageList } from "@/components/chat-message";
 import { SpeechToText } from "@/components/SpeechToText";
 import { Id } from "@convex/_generated/dataModel";
+import { useState } from "react";
 
 export function Chat() {
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const { chatId } = useParams();
   const chat = useQuery(api.queries.getChat, { chatId: chatId as Id<"chats"> });
   const addMessage = useMutation(api.mutations.addMessageToChat);
+  const generateResponse = useAction(api.nodejsactions.generateClaudeResponse);
 
   const handleTranscription = async ({
     text,
@@ -25,6 +31,37 @@ export function Chat() {
       storageId: storageId,
       sender: "user",
     });
+
+    const response = await handleSendMessage(text);
+
+    await addMessage({
+      chatId: chatId as Id<"chats">,
+      content: response || "",
+      storageId: undefined,
+      sender: "komodo",
+    });
+  };
+
+  const handleSendMessage = async (prompt: string) => {
+    setLoading(true);
+    setError("");
+    setResponse("");
+
+    try {
+      const result = await generateResponse({ prompt });
+      if (result.success) {
+        setResponse(result.response || "");
+      } else {
+        setError(result.error || "Unknown error occurred");
+      }
+      return result.response;
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An unexpected error occurred"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

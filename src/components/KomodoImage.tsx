@@ -60,7 +60,7 @@ export function KomodoImage() {
     <img
       src={imageSource}
       alt="Komodo Dragon"
-      className="w-24 h-24 object-cover rounded-lg"
+      className="w-48 h-48 object-cover rounded-lg"
     />
   );
 } 
