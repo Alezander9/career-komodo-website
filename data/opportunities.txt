@@ -1,0 +1,36 @@
+Name: Code in Place
+Description: Code in Place is a free introductory coding course offered by Stanford University's Computer Science Department, led by Professor Chris Piech and Professor Mehran Sahami. It teaches the fundamentals of computer programming using the Python language, designed to be accessible to individuals of all backgrounds, including those without prior coding experience. The course is primarily delivered online, with a focus on creating a supportive learning community. This won’t prepare you for the workforce, but if you’ve never coded before, it’s a good introduction before you jump into bootcamp.
+
+Name: Codesmith.io
+Description: Codesmith.io is a software engineering boot camp offering immersive programs, including a full-time remote program and a part-time remote program, designed to help individuals launch or advance their software engineering careers. They focus on teaching full-stack JavaScript and computer science, using modern web technologies like React and Node.js.
+
+Name: 100 Devs
+Description: #100Devs is a completely free, 30-week remote software engineering bootcamp led by Leon Noel, designed to help people—especially those with no prior experience—break into tech. The program includes live classes twice a week, Sunday office hours, and over 20 hours of weekly commitment, focusing on hands-on learning through projects, labs, and client work. Last year, 72 participants landed jobs at top companies like Amazon and Twitter, with average salary increases of $53K. Although the bootcamp started in January, new learners can still join via the #catchup-crew on Discord. To participate, fill out the forms, join the Discord server, and follow the setup instructions in the #join-100Devs channel. Leon brings years of experience teaching at places like Harvard and MIT, and his mission is to provide accessible, high-impact coding education as a form of activism—no cost, no catch, just commitment. You can start with the playlist on YouTube. Just search “100devs” on YouTube.
+
+Name: freeCodeCamp
+Description: freeCodeCamp is a free, nonprofit coding bootcamp offering over 2,000 hours of self-paced, hands-on training in web development, data structures, APIs, and more. Learners earn certifications in areas like JavaScript, front-end libraries, and data visualization, and can gain real-world experience by contributing to open-source projects for nonprofits. It also provides a large supportive community and extensive free learning resources.
+
+Name: The Odin Project
+Description: The Odin Project is a free, open-source coding curriculum designed to teach full-stack web development through a hands-on, project-based approach. It offers two main learning paths: Full Stack JavaScript and Full Stack Ruby on Rails, both starting with a comprehensive Foundations course covering HTML, CSS, JavaScript, Git, and the command line.
+The curriculum emphasizes self-directed learning by guiding students to consult external resources, encouraging the development of problem-solving and research skills. Learners build real-world projects, such as calculators and to-do apps, to reinforce their understanding and showcase their skills.
+Supported by an active Discord community, The Odin Project provides a collaborative environment for learners to seek help and share knowledge. Many graduates have successfully transitioned into developer roles, attributing their success to the program's comprehensive and practical approach.
+
+Name: App Academy
+Description: App Academy is a top-rated coding bootcamp offering immersive full-time (24 weeks) and part-time (48 weeks) online programs in full-stack software engineering. The curriculum emphasizes hands-on learning with technologies like Python, JavaScript, React, SQL, and Git.
+A standout feature is its deferred tuition model, allowing students to pay after securing a job. For those preferring self-paced study, App Academy Open provides free access to over 500 hours of the bootcamp curriculum. Additionally, the GenAI for Software Developers course equips learners with AI development skills.
+Graduates have successfully transitioned into software engineering roles at various tech companies.
+
+Name: C0d3.com
+Description: C0D3.com is a free, project-based coding platform that teaches full-stack web development with a focus on JavaScript, Node.js, and industry practices. Students work through real-world coding challenges and receive personalized feedback from a community of mentors and peers. The program is structured to help learners build practical skills that align with professional software engineering standards, making it ideal for self-driven learners who value community interaction and mentorship.
+
+Name: Full Stack Open
+Description: Full Stack Open is a free, advanced web development course offered by the University of Helsinki. It covers modern technologies like React, Redux, Node.js, TypeScript, GraphQL, Docker, and CI/CD practices. The course is comprehensive, hands-on, and academically rigorous, aiming at learners who already have basic programming knowledge and want to dive deeper into full-stack JavaScript development. It is recognized for its strong focus on real-world application and professional software engineering practices.
+
+Name: boot.dev
+Description: boot.dev is a paid, gamified learning platform focused on back-end development, offering interactive coding lessons in Go, Python, and JavaScript. It emphasizes hands-on experience through small, progressive challenges designed for beginners and intermediate learners aiming to become back-end developers. boot.dev is ideal for those who prefer a structured, step-by-step curriculum without video lectures, and it focuses heavily on building technical skills relevant to real software engineering jobs.
+
+Name: Udemy
+Description: Free Udemy Courses with a Library Card are available through partnerships many public libraries have with platforms like Gale Presents: Udemy. With just a library card, users can access thousands of professional-grade courses across topics like coding, business, design, and personal development for free. It’s a great resource for self-learners looking to build new skills without the high costs typically associated with online learning platforms.
+
+Name: LinkedIn Learning
+Description: Free LinkedIn Learning with a Library Card allows library members to access LinkedIn Learning’s full course library covering tech, business, design, and personal development topics. It’s completely free. This benefit, available through many public libraries, offers high-quality courses taught by industry experts, and can be a valuable addition for anyone looking to build professional skills or supplement a self-taught curriculum without paying for a subscription.
