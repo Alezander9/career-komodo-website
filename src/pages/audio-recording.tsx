@@ -8,19 +8,27 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import { useAction, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { useEffect, useState } from "react";
+import { AudioVisualizer } from "@/components/ui/audio-visualizer";
 
 export function AudioRecordingPage() {
-  const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({
-      audio: true,
-      mediaRecorderOptions: {
-        mimeType: "audio/webm",
-      },
-    });
+  const {
+    status,
+    startRecording,
+    stopRecording,
+    mediaBlobUrl,
+    previewStream,
+  } = useReactMediaRecorder({
+    audio: true,
+    mediaRecorderOptions: {
+      mimeType: "audio/webm",
+    },
+  });
   const transcribeAudio = useAction(api.actions.audioToText);
   const generateUploadUrl = useMutation(api.mutations.generateUploadUrl);
   const [transcription, setTranscription] = useState("");
   const navigate = useNavigate();
+
+  const isRecording = status === "recording";
 
   const handleTranscription = async (mediaBlobUrl: string) => {
     console.log("Starting transcription...");
@@ -87,22 +95,27 @@ export function AudioRecordingPage() {
               <p>
                 <span className="font-bold">Recording Status:</span> {status}
               </p>
-              {status !== "recording" && (
+              {isRecording && previewStream && (
+                <div className="my-4">
+                  <AudioVisualizer mediaStream={previewStream} numberOfBars={32} />
+                </div>
+              )}
+              {!isRecording && (
                 <button
                   className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
                   onClick={startRecording}
-                  disabled={status === "recording"}
+                  disabled={isRecording}
                 >
                   Start Recording
                 </button>
               )}
-              {status === "recording" && (
+              {isRecording && (
                 <button
                   className="bg-red-500 text-white p-2 rounded-md disabled:opacity-50"
                   onClick={() => {
                     stopRecording();
                   }}
-                  disabled={status !== "recording"}
+                  disabled={!isRecording}
                 >
                   Stop Recording
                 </button>
