@@ -35,6 +35,17 @@ export function Chat() {
     }
   }, [chat]);
 
+  useEffect(() => {
+    if (
+      chat?.messages &&
+      chat.messages.length > 0 &&
+      chat.messages[chat.messages.length - 1].sender === "komodo"
+    ) {
+      setResponse(chat.messages[chat.messages.length - 1].message);
+      setLoading(false);
+    }
+  }, [chat?.messages]);
+
   const handleTranscription = async ({
     text,
     storageId,
@@ -66,9 +77,7 @@ export function Chat() {
 
     try {
       const result = await generateResponse({ prompt });
-      if (result.success) {
-        setResponse(result.response || "");
-      } else {
+      if (!result.success) {
         setError(result.error || "Unknown error occurred");
       }
       return result.response;
@@ -90,7 +99,10 @@ export function Chat() {
             <div className="flex-1 overflow-y-auto mb-4">
               <ChatMessageList
                 messages={chat.messages
-                  .filter((msg) => msg.message !== response)
+                  .filter((msg, index) => {
+                    const isLastMessage = index === chat.messages.length - 1;
+                    return !(isLastMessage && msg.sender === "komodo");
+                  })
                   .map(
                     (msg: { sender: "user" | "komodo"; message: string }) => ({
                       content: msg.message,
