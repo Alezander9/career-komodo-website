@@ -6,6 +6,7 @@ import { Logo } from "@/components/logo";
 import { SignInButton, useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
+
 export function OpportunitiesPage() {
   const { isSignedIn } = useUser();
   const navigate = useNavigate();
@@ -14,6 +15,10 @@ export function OpportunitiesPage() {
         <div className="container mx-auto flex justify-between items-center">
           <Logo />
           <div className="flex items-center gap-4">
+            <Button variant="outline" size="sm"
+            onClick={() => navigate("/komodo-text")}>
+              Komodo Text
+            </Button>
             {isSignedIn ? (
               <Button
                 variant="outline"

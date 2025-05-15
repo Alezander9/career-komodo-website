@@ -57,6 +57,10 @@ export function AudioRecordingPage() {
         <div className="container mx-auto flex justify-between items-center">
           <Logo />
           <div className="flex items-center gap-4">
+            <Button variant="outline" size="sm"
+            onClick={() => navigate("/komodo-text")}>
+              Komodo Text
+            </Button>
             <Button
               variant="outline"
               size="sm"
