@@ -6,7 +6,9 @@ import { useAction, useMutation, useQuery } from "convex/react";
 import { ChatMessageList } from "@/components/chat-message";
 import { SpeechToText } from "@/components/SpeechToText";
 import { Id } from "@convex/_generated/dataModel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { KomodoImage } from "@/components/KomodoImage";
+import Typewriter from "./komodo-text";
 
 export function Chat() {
   const [response, setResponse] = useState("");
@@ -17,6 +19,14 @@ export function Chat() {
   const chat = useQuery(api.queries.getChat, { chatId: chatId as Id<"chats"> });
   const addMessage = useMutation(api.mutations.addMessageToChat);
   const generateResponse = useAction(api.nodejsactions.generateClaudeResponse);
+
+  useEffect(() => {
+    if (chat?.messages.length === 0) {
+      setResponse(
+        "Hi! I'm the Career Komodo, your AI career coach. How can I help you today?"
+      );
+    }
+  }, [chat]);
 
   const handleTranscription = async ({
     text,
@@ -32,14 +42,16 @@ export function Chat() {
       sender: "user",
     });
 
-    const response = await handleSendMessage(text);
+    await handleSendMessage(text);
 
-    await addMessage({
-      chatId: chatId as Id<"chats">,
-      content: response || "",
-      storageId: undefined,
-      sender: "komodo",
-    });
+    if (response) {
+      await addMessage({
+        chatId: chatId as Id<"chats">,
+        content: response || "",
+        storageId: undefined,
+        sender: "komodo",
+      });
+    }
   };
 
   const handleSendMessage = async (prompt: string) => {
@@ -72,15 +84,24 @@ export function Chat() {
             <H1>Chat {new Date(chat.createdAt).toLocaleString()}</H1>
             <div className="flex-1 overflow-y-auto mb-4">
               <ChatMessageList
-                messages={chat.messages.map(
-                  (msg: { sender: "user" | "komodo"; message: string }) => ({
-                    content: msg.message,
-                    sender: msg.sender,
-                    timestamp: new Date(chat.createdAt),
-                    userName: msg.sender === "user" ? "You" : "Komodo",
-                  })
-                )}
+                messages={chat.messages
+                  .filter((msg) => msg.message !== response)
+                  .map(
+                    (msg: { sender: "user" | "komodo"; message: string }) => ({
+                      content: msg.message,
+                      sender: msg.sender,
+                      timestamp: new Date(chat.createdAt),
+                      userName: msg.sender === "user" ? "You" : "Komodo",
+                    })
+                  )}
               />
+              <div className="flex items-center">
+                <KomodoImage />
+                {loading && (
+                  <Typewriter text="Komodo is thinking..." speed={50} />
+                )}
+                {response && <Typewriter text={response} speed={50} />}
+              </div>
             </div>
             <SpeechToText onTranscription={handleTranscription} />
           </Card>
