@@ -75,8 +75,22 @@ export function Chat() {
     setError("");
     setResponse("");
 
+    const messages =
+      chat?.messages.map((msg) => ({
+        role:
+          msg.sender === "user" ? ("user" as const) : ("assistant" as const),
+        content: msg.message,
+      })) || [];
+
+    if (messages[messages.length - 1].role === "assistant") {
+      messages.push({
+        role: "user",
+        content: prompt,
+      });
+    }
+
     try {
-      const result = await generateResponse({ prompt });
+      const result = await generateResponse({ messages });
       if (!result.success) {
         setError(result.error || "Unknown error occurred");
       }
