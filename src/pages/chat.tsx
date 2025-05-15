@@ -25,6 +25,13 @@ export function Chat() {
       setResponse(
         "Hi! I'm the Career Komodo, your AI career coach. How can I help you today?"
       );
+      addMessage({
+        chatId: chatId as Id<"chats">,
+        content:
+          "Hi! I'm the Career Komodo, your AI career coach. How can I help you today?",
+        storageId: undefined,
+        sender: "komodo",
+      });
     }
   }, [chat]);
 
@@ -42,16 +49,14 @@ export function Chat() {
       sender: "user",
     });
 
-    await handleSendMessage(text);
+    const res = await handleSendMessage(text);
 
-    if (response) {
-      await addMessage({
-        chatId: chatId as Id<"chats">,
-        content: response || "",
-        storageId: undefined,
-        sender: "komodo",
-      });
-    }
+    await addMessage({
+      chatId: chatId as Id<"chats">,
+      content: res || "",
+      storageId: undefined,
+      sender: "komodo",
+    });
   };
 
   const handleSendMessage = async (prompt: string) => {
@@ -98,9 +103,9 @@ export function Chat() {
               <div className="flex items-center">
                 <KomodoImage />
                 {loading && (
-                  <Typewriter text="Komodo is thinking..." speed={50} />
+                  <Typewriter text="Komodo is thinking..." speed={20} />
                 )}
-                {response && <Typewriter text={response} speed={50} />}
+                {response && <Typewriter text={response} speed={20} />}
               </div>
             </div>
             <SpeechToText onTranscription={handleTranscription} />
