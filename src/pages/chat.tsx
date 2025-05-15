@@ -6,7 +6,9 @@ import { useAction, useMutation, useQuery } from "convex/react";
 import { ChatMessageList } from "@/components/chat-message";
 import { SpeechToText } from "@/components/SpeechToText";
 import { Id } from "@convex/_generated/dataModel";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { KomodoImage } from "@/components/KomodoImage";
+import Typewriter from "./komodo-text";
 
 export function Chat() {
   const [response, setResponse] = useState("");
@@ -17,6 +19,32 @@ export function Chat() {
   const chat = useQuery(api.queries.getChat, { chatId: chatId as Id<"chats"> });
   const addMessage = useMutation(api.mutations.addMessageToChat);
   const generateResponse = useAction(api.nodejsactions.generateClaudeResponse);
+
+  useEffect(() => {
+    if (chat?.messages.length === 0) {
+      setResponse(
+        "Hi! I'm the Career Komodo, your AI career coach. How can I help you today?"
+      );
+      addMessage({
+        chatId: chatId as Id<"chats">,
+        content:
+          "Hi! I'm the Career Komodo, your AI career coach. How can I help you today?",
+        storageId: undefined,
+        sender: "komodo",
+      });
+    }
+  }, [chat]);
+
+  useEffect(() => {
+    if (
+      chat?.messages &&
+      chat.messages.length > 0 &&
+      chat.messages[chat.messages.length - 1].sender === "komodo"
+    ) {
+      setResponse(chat.messages[chat.messages.length - 1].message);
+      setLoading(false);
+    }
+  }, [chat?.messages]);
 
   const handleTranscription = async ({
     text,
@@ -32,11 +60,11 @@ export function Chat() {
       sender: "user",
     });
 
-    const response = await handleSendMessage(text);
+    const res = await handleSendMessage(text);
 
     await addMessage({
       chatId: chatId as Id<"chats">,
-      content: response || "",
+      content: res || "",
       storageId: undefined,
       sender: "komodo",
     });
@@ -47,11 +75,23 @@ export function Chat() {
     setError("");
     setResponse("");
 
+    const messages =
+      chat?.messages.map((msg) => ({
+        role:
+          msg.sender === "user" ? ("user" as const) : ("assistant" as const),
+        content: msg.message,
+      })) || [];
+
+    if (messages[messages.length - 1].role === "assistant") {
+      messages.push({
+        role: "user",
+        content: prompt,
+      });
+    }
+
     try {
-      const result = await generateResponse({ prompt });
-      if (result.success) {
-        setResponse(result.response || "");
-      } else {
+      const result = await generateResponse({ messages });
+      if (!result.success) {
         setError(result.error || "Unknown error occurred");
       }
       return result.response;
@@ -72,15 +112,27 @@ export function Chat() {
             <H1>Chat {new Date(chat.createdAt).toLocaleString()}</H1>
             <div className="flex-1 overflow-y-auto mb-4">
               <ChatMessageList
-                messages={chat.messages.map(
-                  (msg: { sender: "user" | "komodo"; message: string }) => ({
-                    content: msg.message,
-                    sender: msg.sender,
-                    timestamp: new Date(chat.createdAt),
-                    userName: msg.sender === "user" ? "You" : "Komodo",
+                messages={chat.messages
+                  .filter((msg, index) => {
+                    const isLastMessage = index === chat.messages.length - 1;
+                    return !(isLastMessage && msg.sender === "komodo");
                   })
-                )}
+                  .map(
+                    (msg: { sender: "user" | "komodo"; message: string }) => ({
+                      content: msg.message,
+                      sender: msg.sender,
+                      timestamp: new Date(chat.createdAt),
+                      userName: msg.sender === "user" ? "You" : "Komodo",
+                    })
+                  )}
               />
+              <div className="flex items-center">
+                <KomodoImage />
+                {loading && (
+                  <Typewriter text="Komodo is thinking..." speed={20} />
+                )}
+                {response && <Typewriter text={response} speed={20} />}
+              </div>
             </div>
             <SpeechToText onTranscription={handleTranscription} />
           </Card>
