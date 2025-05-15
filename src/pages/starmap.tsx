@@ -213,7 +213,15 @@ export function StarMapPage() {
         <div className="container mx-auto flex justify-between items-center">
           <Logo />
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => navigate("/home")}>
+            <Button variant="outline" size="sm"
+            onClick={() => navigate("/komodo-text")}>
+              Komodo Text
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/home")}
+            >
               Back to Home
             </Button>
             <SignOutButton>
@@ -319,12 +327,12 @@ export function StarMapPage() {
           >
             <div>
               <h2 style={{ fontSize: "1.2rem", marginBottom: 4 }}>
-                {starData[selectedStar.id]?.label ?? `⭐ ${selectedStar.id}`}
+                {starData[selectedStar!.id]?.label ?? `⭐ ${selectedStar!.id}`}
               </h2>
-              <p style={{ fontSize: "0.9rem" }}>{starData[selectedStar.id]?.description ?? "No description available."}</p>
-              {starData[selectedStar.id]?.links && (
+              <p style={{ fontSize: "0.9rem" }}>{starData[selectedStar!.id]?.description ?? "No description available."}</p>
+              {starData[selectedStar!.id]?.links && (
                 <ul style={{ marginTop: 8 }}>
-                  {starData[selectedStar.id].links!.map((link, i) => (
+                  {starData[selectedStar!.id]!.links!.map((link, i) => (
                     <li key={i}>
                       <a
                         href={link.url}
