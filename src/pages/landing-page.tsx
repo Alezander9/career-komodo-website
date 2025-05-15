@@ -12,7 +12,7 @@ export function LandingPage() {
 
   return (
     <PageContainer>
-      <header className="border-b border p-4">
+      <header className="border-b border p-4 relative z-50">
         <div className="container mx-auto flex justify-between items-center">
           <Logo />
           <div className="flex items-center gap-4">
@@ -50,11 +50,13 @@ export function LandingPage() {
             </Lead>
 
             {!isSignedIn ? (
-              <SignInButton mode="modal">
-                <Button size="lg" className="animate-pulse-slow">
-                  Get Started
-                </Button>
-              </SignInButton>
+              <div className="relative z-50">
+                <SignInButton mode="modal">
+                  <Button size="lg" className="animate-pulse-slow">
+                    Get Started
+                  </Button>
+                </SignInButton>
+              </div>
             ) : (
               <Button 
                 size="lg" 
