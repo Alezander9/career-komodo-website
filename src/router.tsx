@@ -14,6 +14,7 @@ import { ClaudeTest } from "./pages/ClaudeTest";
 import { StarMapPage } from "./pages/starmap";
 import { MariemLandingPage } from "./pages/mariem-landing";
 import { OpportunitiesPage } from "./pages/opportunities-page";
+import { OpportunityDetailPage } from "./pages/opportunity-detail-page";
 import { AboutUsPage } from "./pages/about-us";
 import { TutorialPage } from "./pages/tutorial-page";
 // Feature routes
@@ -24,7 +25,7 @@ const featureRoutes = [
   { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
   { path: "/welcome", name: "Welcome Page", component: LandingPage },
   { path: "/mariem-landing", name: "Mariem's Landing", component: MariemLandingPage },
-  { path: "/opportunities-page", name: "Opportunities", component: OpportunitiesPage },
+  { path: "/opportunities", name: "Opportunities", component: OpportunitiesPage },
   { path: "/about-us", name: "About Us", component: AboutUsPage },
   { path: "/tutorial", name: "Tutorial", component: TutorialPage },
 ];
@@ -82,6 +83,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <TestPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/opportunities/:opportunityId",
+    element: (
+      <ProtectedRoute>
+        <OpportunityDetailPage />
       </ProtectedRoute>
     ),
   },
