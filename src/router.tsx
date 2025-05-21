@@ -21,24 +21,14 @@ import { YourStarmapLoadingPage } from "./pages/your-starmap-loading";
 import { AllChatsPage } from "./pages/chat-test";
 import { Chat } from "./pages/chat";
 
-// Feature routes
+// Feature routes (removed unnecessary routes)
 const featureRoutes = [
   { path: "/chats", name: "Chats", component: AllChatsPage },
-  {
-    path: "/audio-recording",
-    name: "Audio Recording",
-    component: AudioRecordingPage,
-  },
-  { path: "/komodo-text", name: "Komodo Text", component: KomodoTextPage },
-  { path: "/starmap", name: "Star Map", component: StarMapPage },
-  { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
-  { path: "/welcome", name: "Welcome Page", component: LandingPage },
-  { path: "/mariem-landing", name: "Mariem's Landing", component: MariemLandingPage },
+  { path: "/komodo-text", name: "Chat with Komodo", component: KomodoTextPage },
   { path: "/opportunities-page", name: "Opportunities", component: OpportunitiesPage },
   { path: "/about-us", name: "About Us", component: AboutUsPage },
   { path: "/tutorial", name: "Tutorial", component: TutorialPage },
-  { path: "/star-map-background", name: "Star Map Background", component: StarMapBackgroundPage },
-  { path: "/your-starmap-loading", name: "Starmap Loading", component: YourStarmapLoadingPage },
+  { path: "/old-home", name: "Old Home", component: HomePage },
 ];
 
 // Protected route component
@@ -77,7 +67,7 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <PublicRoute>
-        <LandingPage />
+        <MariemLandingPage />
       </PublicRoute>
     ),
   },
@@ -85,7 +75,7 @@ const router = createBrowserRouter([
     path: "/home",
     element: (
       <ProtectedRoute>
-        <HomePage featureRoutes={featureRoutes} />
+        <MariemLandingPage />
       </ProtectedRoute>
     ),
   },
