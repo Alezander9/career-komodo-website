@@ -55,13 +55,13 @@ function mapToGraphData(adjacency: Record<string, string[]>): GraphData {
 
 const OPPORTUNITIES = `
 Name: Code in Place
-Description: Code in Place is a free introductory coding course offered by Stanford University's Computer Science Department, led by Professor Chris Piech and Professor Mehran Sahami. It teaches the fundamentals of computer programming using the Python language, designed to be accessible to individuals of all backgrounds, including those without prior coding experience. The course is primarily delivered online, with a focus on creating a supportive learning community. This won’t prepare you for the workforce, but if you’ve never coded before, it’s a good introduction before you jump into bootcamp.
+Description: Code in Place is a free introductory coding course offered by Stanford University's Computer Science Department, led by Professor Chris Piech and Professor Mehran Sahami. It teaches the fundamentals of computer programming using the Python language, designed to be accessible to individuals of all backgrounds, including those without prior coding experience. The course is primarily delivered online, with a focus on creating a supportive learning community. This won't prepare you for the workforce, but if you've never coded before, it's a good introduction before you jump into bootcamp.
 
 Name: Codesmith.io
 Description: Codesmith.io is a software engineering boot camp offering immersive programs, including a full-time remote program and a part-time remote program, designed to help individuals launch or advance their software engineering careers. They focus on teaching full-stack JavaScript and computer science, using modern web technologies like React and Node.js.
 
 Name: 100 Devs
-Description: #100Devs is a completely free, 30-week remote software engineering bootcamp led by Leon Noel, designed to help people—especially those with no prior experience—break into tech. The program includes live classes twice a week, Sunday office hours, and over 20 hours of weekly commitment, focusing on hands-on learning through projects, labs, and client work. Last year, 72 participants landed jobs at top companies like Amazon and Twitter, with average salary increases of $53K. Although the bootcamp started in January, new learners can still join via the #catchup-crew on Discord. To participate, fill out the forms, join the Discord server, and follow the setup instructions in the #join-100Devs channel. Leon brings years of experience teaching at places like Harvard and MIT, and his mission is to provide accessible, high-impact coding education as a form of activism—no cost, no catch, just commitment. You can start with the playlist on YouTube. Just search “100devs” on YouTube.
+Description: #100Devs is a completely free, 30-week remote software engineering bootcamp led by Leon Noel, designed to help people—especially those with no prior experience—break into tech. The program includes live classes twice a week, Sunday office hours, and over 20 hours of weekly commitment, focusing on hands-on learning through projects, labs, and client work. Last year, 72 participants landed jobs at top companies like Amazon and Twitter, with average salary increases of $53K. Although the bootcamp started in January, new learners can still join via the #catchup-crew on Discord. To participate, fill out the forms, join the Discord server, and follow the setup instructions in the #join-100Devs channel. Leon brings years of experience teaching at places like Harvard and MIT, and his mission is to provide accessible, high-impact coding education as a form of activism—no cost, no catch, just commitment. You can start with the playlist on YouTube. Just search "100devs" on YouTube.
 
 Name: freeCodeCamp
 Description: freeCodeCamp is a free, nonprofit coding bootcamp offering over 2,000 hours of self-paced, hands-on training in web development, data structures, APIs, and more. Learners earn certifications in areas like JavaScript, front-end libraries, and data visualization, and can gain real-world experience by contributing to open-source projects for nonprofits. It also provides a large supportive community and extensive free learning resources.
@@ -86,10 +86,10 @@ Name: boot.dev
 Description: boot.dev is a paid, gamified learning platform focused on back-end development, offering interactive coding lessons in Go, Python, and JavaScript. It emphasizes hands-on experience through small, progressive challenges designed for beginners and intermediate learners aiming to become back-end developers. boot.dev is ideal for those who prefer a structured, step-by-step curriculum without video lectures, and it focuses heavily on building technical skills relevant to real software engineering jobs.
 
 Name: Udemy
-Description: Free Udemy Courses with a Library Card are available through partnerships many public libraries have with platforms like Gale Presents: Udemy. With just a library card, users can access thousands of professional-grade courses across topics like coding, business, design, and personal development for free. It’s a great resource for self-learners looking to build new skills without the high costs typically associated with online learning platforms.
+Description: Free Udemy Courses with a Library Card are available through partnerships many public libraries have with platforms like Gale Presents: Udemy. With just a library card, users can access thousands of professional-grade courses across topics like coding, business, design, and personal development for free. It's a great resource for self-learners looking to build new skills without the high costs typically associated with online learning platforms.
 
 Name: LinkedIn Learning
-Description: Free LinkedIn Learning with a Library Card allows library members to access LinkedIn Learning’s full course library covering tech, business, design, and personal development topics. It’s completely free. This benefit, available through many public libraries, offers high-quality courses taught by industry experts, and can be a valuable addition for anyone looking to build professional skills or supplement a self-taught curriculum without paying for a subscription.
+Description: Free LinkedIn Learning with a Library Card allows library members to access LinkedIn Learning's full course library covering tech, business, design, and personal development topics. It's completely free. This benefit, available through many public libraries, offers high-quality courses taught by industry experts, and can be a valuable addition for anyone looking to build professional skills or supplement a self-taught curriculum without paying for a subscription.
 `
 
 const userProfile = "A young man named Ryan who is from Illinois. He likes coding, but doesn't have much experience. He loves komodo dragons. He is extroverted and loves league of legends and JJK."
@@ -98,7 +98,8 @@ export function StarMapPage() {
 
   const generateStarMap = useAction(api.nodejsactions.generateStarMapResponse);
   const [mockAIJSON, setMockAIJSON] = useState<StarMapJSON | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const [selectedStar, setSelectedStar] = useState<NodeType | null>(null);
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
@@ -110,21 +111,26 @@ export function StarMapPage() {
   const angleRef = useRef(0);
   const mapAreaRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const fetchStarMap = async () => {
+  const fetchStarMap = async () => {
+    setLoading(true);
+    setError(null);
+    try {
       const prompt = "Generate a StarMap for <user>" + userProfile + "</user> primarily using these <opportunities>" + OPPORTUNITIES + "</opportunities>";
       const result = await generateStarMap({ prompt });
       if (result.success) {
         setMockAIJSON(result.response);
         console.log("Fetched StarMap:", result.response);
       } else {
-        setMockAIJSON(null);
+        setError(result.error || "An unknown error occurred");
         console.error("Error fetching StarMap:", result.error);
       }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An unknown error occurred");
+      console.error("Exception fetching StarMap:", err);
+    } finally {
       setLoading(false);
-    };
-    fetchStarMap();
-  }, [generateStarMap]);
+    }
+  };
 
   useEffect(() => {
     if (!mockAIJSON) return;
@@ -184,12 +190,93 @@ export function StarMapPage() {
     return () => window.removeEventListener("mousedown", handleClick);
   }, [spinning]);
 
-  if (loading || !mockAIJSON) {
-    return <div>Loading StarMap...</div>;
-  }
+  // Render the map or loading state
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full bg-black text-white">
+          <div className="text-2xl mb-4">Generating Your StarMap...</div>
+          <div className="text-lg">This may take a minute...</div>
+        </div>
+      );
+    }
 
-  const startNodes = new Set(mockAIJSON.nodeTypes.start);
-  const endNodes = new Set(mockAIJSON.nodeTypes.end);
+    if (error) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full bg-black text-white">
+          <div className="text-2xl mb-4">Error Generating StarMap</div>
+          <div className="text-lg mb-6">{error}</div>
+          <Button onClick={fetchStarMap}>Try Again</Button>
+        </div>
+      );
+    }
+
+    if (!mockAIJSON) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full bg-black text-white">
+          <div className="text-3xl mb-6">Ready to Explore Career Paths?</div>
+          <div className="text-xl mb-10 max-w-xl text-center">
+            Click the button below to generate a personalized star map of career opportunities based on your profile.
+          </div>
+          <Button 
+            size="lg"
+            onClick={fetchStarMap}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 text-xl"
+          >
+            Generate StarMap
+          </Button>
+        </div>
+      );
+    }
+
+    const startNodes = new Set(mockAIJSON.nodeTypes.start);
+    const endNodes = new Set(mockAIJSON.nodeTypes.end);
+
+    return (
+      <ForceGraph3D
+        ref={fgRef}
+        width={dimensions.width}
+        height={dimensions.height}
+        graphData={graphData}
+        backgroundColor="#000"
+        nodeColor={node => {
+          if (startNodes.has(node.id)) return "green";
+          if (endNodes.has(node.id)) return "red";
+          return "#fff";
+        }}
+        linkColor={() => "#88ccff"}
+        nodeThreeObject={(node: NodeType) => {
+          const group = new THREE.Group();
+
+          let color = 0xffffff;
+          if (startNodes.has(node.id)) color = 0x51d6ff; // green
+          else if (endNodes.has(node.id)) color = 0xffd60a; // red
+
+          const geometry = new THREE.SphereGeometry(4, 16, 16);
+          const material = new THREE.MeshBasicMaterial({
+            color,
+            transparent: true,
+            opacity: 0.95
+          });
+          const sphere = new THREE.Mesh(geometry, material);
+
+          const glowMaterial = new THREE.MeshBasicMaterial({
+            color: 0x88ccff,
+            transparent: true,
+            opacity: 0.25
+          });
+          const glow = new THREE.Mesh(new THREE.SphereGeometry(8, 16, 16), glowMaterial);
+
+          group.add(glow);
+          group.add(sphere);
+          return group;
+        }}
+        onNodeClick={setSelectedStar}
+        enableNodeDrag={false}
+        onEngineTick={handleEngineTick}
+      />
+    );
+  };
 
   return (
     <div style={{ height: "100vh", width: "100vw", display: "flex", flexDirection: "column", overflow: "hidden" }}>
@@ -226,51 +313,10 @@ export function StarMapPage() {
           overflow: "hidden"
         }}
       >
-        <ForceGraph3D
-          ref={fgRef}
-          width={dimensions.width}
-          height={dimensions.height}
-          graphData={graphData}
-          backgroundColor="#000"
-          nodeColor={node => {
-            if (startNodes.has(node.id)) return "green";
-            if (endNodes.has(node.id)) return "red";
-            return "#fff";
-          }}
-          linkColor={() => "#88ccff"}
-          nodeThreeObject={(node: NodeType) => {
-            const group = new THREE.Group();
+        {renderContent()}
 
-            let color = 0xffffff;
-            if (startNodes.has(node.id)) color = 0x51d6ff; // green
-            else if (endNodes.has(node.id)) color = 0xffd60a; // red
-
-            const geometry = new THREE.SphereGeometry(4, 16, 16);
-            const material = new THREE.MeshBasicMaterial({
-              color,
-              transparent: true,
-              opacity: 0.95
-            });
-            const sphere = new THREE.Mesh(geometry, material);
-
-            const glowMaterial = new THREE.MeshBasicMaterial({
-              color: 0x88ccff,
-              transparent: true,
-              opacity: 0.25
-            });
-            const glow = new THREE.Mesh(new THREE.SphereGeometry(8, 16, 16), glowMaterial);
-
-            group.add(glow);
-            group.add(sphere);
-            return group;
-          }}
-          onNodeClick={setSelectedStar}
-          enableNodeDrag={false}
-          onEngineTick={handleEngineTick}
-        />
-
-        {/* Overlay text for vibes */}
-        {spinning && (
+        {/* Show overlay text only when the map is loaded and spinning */}
+        {spinning && mockAIJSON && (
           <div
             style={{
               position: "absolute",

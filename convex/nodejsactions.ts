@@ -83,17 +83,24 @@ js
   },
   "starData": {
     "OpportunityA": {
-      "label": "Emoji OpportunityA",
+      "label": "💫 OpportunityA",
       "description": "Short, engaging description of OpportunityA.",
       "links": [{ "text": "Link Text", "url": "https://example.com" }]
     },
     ...
   },
   "nodeTypes": {
-    "start": ["OpportunityA"],
-    "end": ["OpportunityZ"]
+    "start": ["OpportunityA", "OpportunityB"],
+    "end": ["OpportunityY", "OpportunityZ"]
   }
 }
+
+IMPORTANT:
+1. The "nodeTypes" field MUST be included and MUST contain both "start" and "end" arrays.
+2. "start" should include at least one opportunity that's good for beginners.
+3. "end" should include at least one opportunity that represents an advanced option.
+4. Every opportunity name used in "adjacency" must exist as a key in "starData".
+5. The "label" for each opportunity should include a relevant emoji.
 
 Input:
 
@@ -114,7 +121,7 @@ export const generateStarMapResponse = action({
   handler: async (ctx, args) => {
 
     const anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY ?? "", //worked with manually inputting key whoops
+      apiKey: process.env.ANTHROPIC_API_KEY ?? "",
     });
 
     try {
@@ -128,39 +135,148 @@ export const generateStarMapResponse = action({
             content: args.prompt,
           },
         ],
+        tools: [{
+          name: "star_map",
+          description: "Generate a star map of career opportunities based on a user profile. The map shows relationships between different learning or career opportunities, represented as nodes in a graph with connections between related options.",
+          input_schema: {
+            type: "object",
+            properties: {
+              adjacency: {
+                type: "object",
+                description: "A graph structure showing connections between opportunities. Keys are opportunity names, values are arrays of connected opportunity names.",
+                additionalProperties: {
+                  type: "array",
+                  items: { type: "string" }
+                }
+              },
+              starData: {
+                type: "object",
+                description: "Details about each opportunity. Keys match the names used in the adjacency object.",
+                additionalProperties: {
+                  type: "object",
+                  properties: {
+                    label: { 
+                      type: "string",
+                      description: "A short name for the opportunity, typically including an emoji"
+                    },
+                    description: { 
+                      type: "string",
+                      description: "A brief description of what this opportunity offers"
+                    },
+                    links: {
+                      type: "array",
+                      description: "Optional relevant links for this opportunity",
+                      items: {
+                        type: "object",
+                        properties: {
+                          text: { type: "string", description: "Display text for the link" },
+                          url: { type: "string", description: "URL for the link" }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              nodeTypes: {
+                type: "object",
+                description: "Classification of nodes into categories. MUST include both 'start' and 'end' arrays.",
+                properties: {
+                  start: { 
+                    type: "array", 
+                    description: "Array of opportunity names that are good starting points",
+                    items: { type: "string" } 
+                  },
+                  end: { 
+                    type: "array", 
+                    description: "Array of opportunity names that are end goals or advanced options",
+                    items: { type: "string" } 
+                  }
+                },
+                required: ["start", "end"]
+              }
+            },
+            required: ["adjacency", "starData", "nodeTypes"]
+          }
+        }],
+        tool_choice: { type: "tool", name: "star_map" }
       });
 
-      console.log("Claude raw response:", response.content[0]);
-
-      if (
-        !response.content ||
-        !response.content[0] ||
-        response.content[0].type !== 'text'
-      ) {
-        throw new Error("Unexpected or missing response type from Claude");
+      if (!response.content || response.content.length === 0) {
+        throw new Error("Empty response from Claude");
       }
 
-      const raw = response.content[0].text;
-
-      const trimmed = raw.trim();
-
-      const jsonStart = trimmed.indexOf('{');
-      const jsonEnd = trimmed.lastIndexOf('}');
-      if (jsonStart === -1 || jsonEnd === -1) {
-        throw new Error("Claude's response did not contain a JSON object.");
+      // Extract the tool call response
+      const toolCall = response.content.find(
+        item => item.type === 'tool_use' && item.name === 'star_map'
+      );
+      
+      if (!toolCall || toolCall.type !== 'tool_use') {
+        throw new Error("No tool use response found from Claude");
       }
-      const jsonString = trimmed.substring(jsonStart, jsonEnd + 1);
 
-      let parsed;
-      try {
-        parsed = JSON.parse(jsonString);
-      } catch (e) {
-        throw new Error("Claude's response was not valid JSON: ");
+      // Validate the response contains all required fields
+      const input = toolCall.input as any;
+      
+      // Check if we have valid adjacency data
+      if (!input.adjacency || typeof input.adjacency !== 'object' || Object.keys(input.adjacency).length === 0) {
+        // Create a minimal fallback structure with some of the opportunities from the prompt
+        console.warn("Missing or empty 'adjacency' field in Claude's response - using fallback");
+        
+        // Extract opportunity names from the prompt
+        const opportunityMatches = args.prompt.match(/Name: ([^\n]+)/g) || [];
+        const opportunities = opportunityMatches.map(match => match.replace("Name: ", "").trim());
+        
+        // Need at least 2 opportunities for a minimal graph
+        if (opportunities.length >= 2) {
+          input.adjacency = {};
+          // Create a simple chain of opportunities
+          for (let i = 0; i < opportunities.length; i++) {
+            const current = opportunities[i];
+            const next = opportunities[i + 1];
+            input.adjacency[current] = next ? [next] : [];
+          }
+          
+          // Create minimal starData
+          input.starData = {};
+          opportunities.forEach(opp => {
+            input.starData[opp] = {
+              label: `🌟 ${opp}`,
+              description: `Educational opportunity: ${opp}`
+            };
+          });
+          
+          // Set start and end nodes
+          input.nodeTypes = {
+            start: [opportunities[0]],
+            end: [opportunities[opportunities.length - 1]]
+          };
+        } else {
+          throw new Error("Not enough opportunity data to create a fallback structure");
+        }
+      }
+      
+      if (!input.starData || typeof input.starData !== 'object') {
+        throw new Error("Missing or invalid 'starData' field in Claude's response");
+      }
+      
+      if (!input.nodeTypes || typeof input.nodeTypes !== 'object' || 
+          !input.nodeTypes.start || !input.nodeTypes.end) {
+        // If nodeTypes is missing, add a default one to prevent frontend errors
+        const opportunityNames = Object.keys(input.adjacency);
+        if (opportunityNames.length > 0) {
+          input.nodeTypes = {
+            start: [opportunityNames[0]],
+            end: [opportunityNames[opportunityNames.length - 1]]
+          };
+          console.warn("Missing or invalid 'nodeTypes' field in Claude's response - using default");
+        } else {
+          throw new Error("Cannot create default nodeTypes with empty adjacency data");
+        }
       }
 
       return {
         success: true,
-        response: parsed,
+        response: input,
       };
     } catch (error) {
       console.error("Error calling Claude API:", error);
