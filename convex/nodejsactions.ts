@@ -187,14 +187,24 @@ OUTPUT ONLY JSON. ONLY REAL JSON. NOTHING ELSE.
 
 </instructions>
 `;
+
 export const generateStarMapResponse = action({
   args: {
-    prompt: v.string(),
+    userProfile: v.string(),
+    opportunitiesBlock: v.string(),
   },
   handler: async (ctx, args) => {
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY ?? "",
     });
+
+    const prompt = `
+    User Profile:
+    ${args.userProfile}
+
+    Opportunities:
+    ${args.opportunitiesBlock}
+    `.trim();
 
     try {
       const response = await anthropic.messages.create({
@@ -204,7 +214,7 @@ export const generateStarMapResponse = action({
         messages: [
           {
             role: "user",
-            content: args.prompt,
+            content: prompt,
           },
         ],
         tools: [
@@ -294,7 +304,6 @@ export const generateStarMapResponse = action({
         throw new Error("Empty response from Claude");
       }
 
-      // Extract the tool call response
       const toolCall = response.content.find(
         (item) => item.type === "tool_use" && item.name === "star_map"
       );
@@ -303,51 +312,40 @@ export const generateStarMapResponse = action({
         throw new Error("No tool use response found from Claude");
       }
 
-      // Validate the response contains all required fields
-      const input = toolCall.input as {
-        adjacency: Record<string, string[]>;
-        starData: Record<
-          string,
-          {
-            label: string;
-            description: string;
-            links?: Array<{ text: string; url: string }>;
-          }
-        >;
-        nodeTypes: {
-          start: string[];
-          end: string[];
-        };
-      };
+      const input = toolCall.input as any;
 
-      // Check if we have valid adjacency data
       if (
         !input.adjacency ||
         typeof input.adjacency !== "object" ||
         Object.keys(input.adjacency).length === 0
       ) {
-        // Create a minimal fallback structure with some of the opportunities from the prompt
         console.warn(
           "Missing or empty 'adjacency' field in Claude's response - using fallback"
         );
 
-        // Extract opportunity names from the prompt
-        const opportunityMatches = args.prompt.match(/Name: ([^\n]+)/g) || [];
+        const opportunityMatches =
+          args.opportunitiesBlock.match(/Name: ([^\n]+)/g) || [];
         const opportunities = opportunityMatches.map((match) =>
           match.replace("Name: ", "").trim()
         );
 
-        // Need at least 2 opportunities for a minimal graph
+        if (opportunities.length === 0) {
+          const lines = args.opportunitiesBlock
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean);
+          opportunities.push(...lines);
+        }
+
         if (opportunities.length >= 2) {
           input.adjacency = {};
-          // Create a simple chain of opportunities
+
           for (let i = 0; i < opportunities.length; i++) {
             const current = opportunities[i];
             const next = opportunities[i + 1];
             input.adjacency[current] = next ? [next] : [];
           }
 
-          // Create minimal starData
           input.starData = {};
           opportunities.forEach((opp) => {
             input.starData[opp] = {
@@ -356,7 +354,6 @@ export const generateStarMapResponse = action({
             };
           });
 
-          // Set start and end nodes
           input.nodeTypes = {
             start: [opportunities[0]],
             end: [opportunities[opportunities.length - 1]],
@@ -380,7 +377,6 @@ export const generateStarMapResponse = action({
         !input.nodeTypes.start ||
         !input.nodeTypes.end
       ) {
-        // If nodeTypes is missing, add a default one to prevent frontend errors
         const opportunityNames = Object.keys(input.adjacency);
         if (opportunityNames.length > 0) {
           input.nodeTypes = {
