@@ -53,7 +53,7 @@ function mapToGraphData(adjacency: Record<string, string[]>): GraphData {
   return { nodes, links };
 }
 
-const OPPORTUNITIES = `
+const opportunitiesBlock = `
 Name: Code in Place
 Description: Code in Place is a free introductory coding course offered by Stanford University's Computer Science Department, led by Professor Chris Piech and Professor Mehran Sahami. It teaches the fundamentals of computer programming using the Python language, designed to be accessible to individuals of all backgrounds, including those without prior coding experience. The course is primarily delivered online, with a focus on creating a supportive learning community. This won't prepare you for the workforce, but if you've never coded before, it's a good introduction before you jump into bootcamp.
 
@@ -115,8 +115,7 @@ export function StarMapPage() {
     setLoading(true);
     setError(null);
     try {
-      const prompt = "Generate a StarMap for <user>" + userProfile + "</user> primarily using these <opportunities>" + OPPORTUNITIES + "</opportunities>";
-      const result = await generateStarMap({ prompt });
+      const result = await generateStarMap({ userProfile, opportunitiesBlock });
       if (result.success) {
         setMockAIJSON(result.response);
         console.log("Fetched StarMap:", result.response);

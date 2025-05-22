@@ -29,6 +29,7 @@ const featureRoutes = [
   { path: "/about-us", name: "About Us", component: AboutUsPage },
   { path: "/tutorial", name: "Tutorial", component: TutorialPage },
   { path: "/old-home", name: "Old Home", component: HomePage },
+  { path: "/star", name: "StarMap", component: StarMapPage },
 ];
 
 // Protected route component
