@@ -14,6 +14,7 @@ import { ClaudeTest } from "./pages/ClaudeTest";
 import { StarMapPage } from "./pages/starmap";
 import { MariemLandingPage } from "./pages/mariem-landing";
 import { OpportunitiesPage } from "./pages/opportunities-page";
+import { OpportunityDetailPage } from "./pages/opportunity-detail-page";
 import { AboutUsPage } from "./pages/about-us";
 import { TutorialPage } from "./pages/tutorial-page";
 import { StarMapBackgroundPage } from "./pages/star-map-background";
@@ -25,9 +26,19 @@ import { MainLayout } from "@/components/layout";
 
 // Feature routes (removed unnecessary routes)
 const featureRoutes = [
+<<<<<<< HEAD
   { path: "/chats", name: "Chats", component: AllChatsPage },
   { path: "/komodo-text", name: "Chat with Komodo", component: KomodoTextPage },
   { path: "/opportunities-page", name: "Opportunities", component: OpportunitiesPage },
+=======
+  { path: "/audio-recording", name: "Audio Recording", component: AudioRecordingPage },
+  { path: "/komodo-text", name: "Komodo Text", component: KomodoTextPage },
+  { path: "/starmap", name: "Star Map", component: StarMapPage },
+  { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
+  { path: "/welcome", name: "Welcome Page", component: LandingPage },
+  { path: "/mariem-landing", name: "Mariem's Landing", component: MariemLandingPage },
+  { path: "/opportunities", name: "Opportunities", component: OpportunitiesPage },
+>>>>>>> fix/opportunities-page
   { path: "/about-us", name: "About Us", component: AboutUsPage },
   { path: "/tutorial", name: "Tutorial", component: TutorialPage },
   { path: "/star-map-background", name: "Star Map Background", component: StarMapBackgroundPage },
@@ -105,6 +116,14 @@ const router = createBrowserRouter([
         <MainLayout>
           <Chat />
         </MainLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/opportunities/:opportunityId",
+    element: (
+      <ProtectedRoute>
+        <OpportunityDetailPage />
       </ProtectedRoute>
     ),
   },
