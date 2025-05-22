@@ -34,6 +34,7 @@ const featureRoutes = [
   { path: "/your-starmap-loading", name: "Starmap Loading", component: YourStarmapLoadingPage },
   { path: "/faq", name: "FAQ", component: FAQPage },
   { path: "/old-home", name: "Old Home", component: HomePage },
+  { path: "/star", name: "StarMap", component: StarMapPage },
 ];
 
 // Protected route component
