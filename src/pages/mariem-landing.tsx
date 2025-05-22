@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useUser, SignInButton } from "@clerk/clerk-react";
 import { PageContainer, MainContent, Card } from "@/components/layout";
-import { Logo } from "@/components/logo";
 import { H1, H2, H3, P, Lead } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 
@@ -11,33 +10,6 @@ export function MariemLandingPage() {
 
   return (
     <PageContainer>
-      <header className="border-b border p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Logo />
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm"
-            onClick={() => navigate("/komodo-text")}>
-              Komodo Text
-            </Button>
-            {isSignedIn ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/home")}
-              >
-                Back to Home
-              </Button>
-            ) : (
-              <SignInButton mode="modal">
-                <Button variant="outline" size="sm">
-                  Sign In
-                </Button>
-              </SignInButton>
-            )}
-          </div>
-        </div>
-      </header>
-
       <MainContent>
         {/* Hero Section */}
         <section className="py-20 text-center">
@@ -52,14 +24,10 @@ export function MariemLandingPage() {
                   <SignInButton mode="modal">
                     <Button size="lg">Get Started</Button>
                   </SignInButton>
-                  <Button size="lg" variant="outline" onClick={() => navigate("/home")}>
-                    Learn More
-                  </Button>
+                  <Button size="lg" variant="outline" onClick={() => navigate("/home")}>Learn More</Button>
                 </>
               ) : (
-                <Button size="lg" onClick={() => navigate("/home")}>
-                  Return to Dashboard
-                </Button>
+                <Button size="lg" onClick={() => navigate("/home")}>Return to Dashboard</Button>
               )}
             </div>
           </div>
@@ -123,19 +91,11 @@ export function MariemLandingPage() {
             <P className="mb-8">Join other professionals who have found their path with CareerKomodo</P>
             {!isSignedIn ? (
               <SignInButton mode="modal">
-                <Button size="lg" variant="outline" className="bg-transparent border-white hover:bg-white/10">
-                  Start Your Journey
-                </Button>
+                <Button size="lg" variant="outline" className="bg-transparent border-white hover:bg-white/10">Start Your Journey</Button>
               </SignInButton>
             ) : (
-              <Button 
-                size="lg" 
-                variant="outline" 
-                onClick={() => navigate("/home")}
-                className="bg-transparent border-white hover:bg-white/10"
-              >
-                Return to Dashboard
-              </Button>
+              <Button size="lg" variant="outline" onClick={() => navigate("/home")}
+                className="bg-transparent border-white hover:bg-white/10">Return to Dashboard</Button>
             )}
           </div>
         </section>

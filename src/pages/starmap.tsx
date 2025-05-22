@@ -209,28 +209,6 @@ export function StarMapPage() {
 
   return (
     <div style={{ height: "100vh", width: "100vw", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-      <header className="border-b border p-4" style={{ flexShrink: 0 }}>
-        <div className="container mx-auto flex justify-between items-center">
-          <Logo />
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm"
-            onClick={() => navigate("/komodo-text")}>
-              Komodo Text
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/home")}
-            >
-              Back to Home
-            </Button>
-            <SignOutButton>
-              <Button variant="outline" size="sm">Sign Out</Button>
-            </SignOutButton>
-          </div>
-        </div>
-      </header>
-
       <div
         ref={mapAreaRef}
         style={{

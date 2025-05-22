@@ -20,6 +20,8 @@ import { StarMapBackgroundPage } from "./pages/star-map-background";
 import { YourStarmapLoadingPage } from "./pages/your-starmap-loading";
 import { AllChatsPage } from "./pages/chat-test";
 import { Chat } from "./pages/chat";
+import { FAQPage } from "./pages/faq";
+import { MainLayout } from "@/components/layout";
 
 // Feature routes
 const featureRoutes = [
@@ -39,6 +41,7 @@ const featureRoutes = [
   { path: "/tutorial", name: "Tutorial", component: TutorialPage },
   { path: "/star-map-background", name: "Star Map Background", component: StarMapBackgroundPage },
   { path: "/your-starmap-loading", name: "Starmap Loading", component: YourStarmapLoadingPage },
+  { path: "/faq", name: "FAQ", component: FAQPage },
 ];
 
 // Protected route component
@@ -85,7 +88,9 @@ const router = createBrowserRouter([
     path: "/home",
     element: (
       <ProtectedRoute>
-        <HomePage featureRoutes={featureRoutes} />
+        <MainLayout>
+          <HomePage featureRoutes={featureRoutes} />
+        </MainLayout>
       </ProtectedRoute>
     ),
   },
@@ -93,7 +98,9 @@ const router = createBrowserRouter([
     path: "/test",
     element: (
       <ProtectedRoute>
-        <TestPage />
+        <MainLayout>
+          <TestPage />
+        </MainLayout>
       </ProtectedRoute>
     ),
   },
@@ -101,7 +108,9 @@ const router = createBrowserRouter([
     path: "/chat/:chatId",
     element: (
       <ProtectedRoute>
-        <Chat />
+        <MainLayout>
+          <Chat />
+        </MainLayout>
       </ProtectedRoute>
     ),
   },
@@ -109,7 +118,9 @@ const router = createBrowserRouter([
     path: route.path,
     element: (
       <ProtectedRoute>
-        <route.component />
+        <MainLayout>
+          <route.component />
+        </MainLayout>
       </ProtectedRoute>
     ),
   })),

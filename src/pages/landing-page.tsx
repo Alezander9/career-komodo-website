@@ -5,6 +5,7 @@ import { SpaceBackground, PageContainer, MainContent } from "@/components/layout
 import { Logo } from "@/components/logo";
 import { H1, Lead } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
+import { Navbar } from "@/components/navbar";
 
 export function LandingPage() {
   const { isSignedIn } = useUser();
@@ -14,7 +15,10 @@ export function LandingPage() {
     <PageContainer>
       <header className="border-b border p-4 relative z-50">
         <div className="container mx-auto flex justify-between items-center">
-          <Logo />
+          <div className="flex items-center gap-8">
+            <Logo />
+            <Navbar />
+          </div>
           <div className="flex items-center gap-4">
             {isSignedIn ? (
               <Button

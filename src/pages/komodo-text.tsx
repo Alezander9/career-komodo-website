@@ -100,26 +100,6 @@ export function KomodoTextPage() {
 
   return (
     <PageContainer>
-      <header className="border-b border p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Logo />
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/home")}
-            >
-              Back to Home
-            </Button>
-            <SignOutButton>
-              <Button variant="outline" size="sm">
-                Sign Out
-              </Button>
-            </SignOutButton>
-          </div>
-        </div>
-      </header>
-
       <MainContent>
         <Section>
           <H1 className="mb-6">Chat with Komodo</H1>
