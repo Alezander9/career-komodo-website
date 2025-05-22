@@ -3,6 +3,7 @@ import { useAction, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { useEffect } from "react";
 import { Id } from "@convex/_generated/dataModel";
+import { Visualizer } from "react-sound-visualizer";
 
 export function SpeechToText({
   onTranscription,
@@ -12,13 +13,18 @@ export function SpeechToText({
     storageId?: Id<"_storage">;
   }) => void;
 }) {
-  const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({
-      audio: true,
-      mediaRecorderOptions: {
-        mimeType: "audio/webm",
-      },
-    });
+  const {
+    status,
+    startRecording,
+    stopRecording,
+    mediaBlobUrl,
+    previewAudioStream,
+  } = useReactMediaRecorder({
+    audio: true,
+    mediaRecorderOptions: {
+      mimeType: "audio/webm",
+    },
+  });
   const transcribeAudio = useAction(api.actions.audioToText);
   const generateUploadUrl = useMutation(api.mutations.generateUploadUrl);
 
@@ -51,8 +57,25 @@ export function SpeechToText({
     }
   }, [mediaBlobUrl]);
 
+  useEffect(() => {
+    if (previewAudioStream) {
+      console.log("Preview audio stream:", previewAudioStream);
+    }
+  }, [previewAudioStream]);
+
   return (
     <div className="flex flex-col gap-4">
+      {previewAudioStream && (
+        <Visualizer
+          audio={previewAudioStream}
+          strokeColor="#FFF"
+          mode="current"
+        >
+          {({ canvasRef }) => (
+            <canvas ref={canvasRef} width={500} height={100} />
+          )}
+        </Visualizer>
+      )}
       {status !== "recording" && (
         <button
           className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
