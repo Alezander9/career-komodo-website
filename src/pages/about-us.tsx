@@ -13,32 +13,6 @@ export function AboutUsPage() {
 
     return (
         <PageContainer>
-            <header className="border-b border p-4">
-        <div className="container mx-auto flex justify-between items-center">
-        <Logo />
-        <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm"
-            onClick={() => navigate("/komodo-text")}>
-                Komodo Text
-            </Button>
-            {isSignedIn ? (
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/home")}
-            >
-                Back to Home
-            </Button>
-            ) : (
-            <SignInButton mode="modal">
-                <Button variant="outline" size="sm">
-                    Sign In
-                </Button>
-            </SignInButton>
-            )}
-        </div>
-        </div>
-    </header>
             <MainContent>
                 <div style = {{textAlign: "center"}}>
                 <h1 className="text-5xl font-bold" style = {{marginTop: "20px"}}>About Us</h1>

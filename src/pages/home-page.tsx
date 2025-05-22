@@ -11,6 +11,7 @@ import {
 import { Logo } from "@/components/logo";
 import { H3, P } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
+// import { Navbar } from "@/components/navbar";
 
 interface FeatureRoute {
   path: string;
@@ -40,23 +41,6 @@ export function HomePage({ featureRoutes }: HomePageProps) {
 
   return (
     <PageContainer>
-      <header className="border-b border p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Logo />
-          <div className="flex items-center gap-4">
-          <Button variant="outline" size="sm"
-            onClick={() => navigate("/komodo-text")}>
-              Komodo Text
-            </Button>
-          <SignOutButton>
-            <Button variant="outline" size="sm">
-              Sign Out
-            </Button>
-          </SignOutButton>
-          </div>
-        </div>
-      </header>
-
       <MainContent>
         <Card className="max-w-2xl mx-auto">
           <H3 className="mb-4">Features</H3>

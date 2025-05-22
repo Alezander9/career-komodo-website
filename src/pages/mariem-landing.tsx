@@ -1,7 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useUser, SignInButton } from "@clerk/clerk-react";
+<<<<<<< HEAD
 import { PageContainer, MainContent } from "@/components/layout";
 import { Logo } from "@/components/logo";
+=======
+import { PageContainer, MainContent, Card } from "@/components/layout";
+>>>>>>> navbar
 import { H1, H2, H3, P, Lead } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +15,7 @@ export function MariemLandingPage() {
 
   return (
     <PageContainer>
+<<<<<<< HEAD
       <header className="p-4">
         <div className="container mx-auto flex justify-between items-center">
           <Logo />
@@ -38,6 +43,8 @@ export function MariemLandingPage() {
         </div>
       </header>
 
+=======
+>>>>>>> navbar
       <MainContent>
         {/* Hero Section */}
         <section className="py-20 text-center">
@@ -52,6 +59,7 @@ export function MariemLandingPage() {
                   <SignInButton mode="modal">
                     <Button size="lg">Get Started</Button>
                   </SignInButton>
+<<<<<<< HEAD
                   <Button size="lg" variant="outline" onClick={() => navigate("/about-us")}>
                     Learn More
                   </Button>
@@ -83,6 +91,12 @@ export function MariemLandingPage() {
                     </Button>
                   </div>
                 </>
+=======
+                  <Button size="lg" variant="outline" onClick={() => navigate("/home")}>Learn More</Button>
+                </>
+              ) : (
+                <Button size="lg" onClick={() => navigate("/home")}>Return to Dashboard</Button>
+>>>>>>> navbar
               )}
             </div>
           </div>
@@ -146,11 +160,10 @@ export function MariemLandingPage() {
             <P className="mb-8">Join other professionals who have found their path with CareerKomodo</P>
             {!isSignedIn ? (
               <SignInButton mode="modal">
-                <Button size="lg" variant="outline" className="bg-transparent border-white hover:bg-white/10">
-                  Start Your Journey
-                </Button>
+                <Button size="lg" variant="outline" className="bg-transparent border-white hover:bg-white/10">Start Your Journey</Button>
               </SignInButton>
             ) : (
+<<<<<<< HEAD
               <div className="flex flex-col items-center gap-2">
                 <svg
                   className="w-8 h-8 text-white animate-pulse"
@@ -176,6 +189,10 @@ export function MariemLandingPage() {
                   Chat with Komodo
                 </Button>
               </div>
+=======
+              <Button size="lg" variant="outline" onClick={() => navigate("/home")}
+                className="bg-transparent border-white hover:bg-white/10">Return to Dashboard</Button>
+>>>>>>> navbar
             )}
           </div>
         </section>
