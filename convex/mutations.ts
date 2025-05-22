@@ -110,9 +110,10 @@ export const addMessageToChat = mutation({
     content: v.string(),
     storageId: v.optional(v.id("_storage")),
     sender: v.union(v.literal("user"), v.literal("komodo")),
+    percentComplete: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const { chatId, content, sender, storageId } = args;
+    const { chatId, content, sender, storageId, percentComplete } = args;
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       throw new Error("Not authenticated");
@@ -137,7 +138,12 @@ export const addMessageToChat = mutation({
     const updatedChat = await ctx.db.patch(chatId, {
       messages: [
         ...chat.messages,
-        { sender: sender, message: content, storageId: storageId },
+        {
+          sender: sender,
+          message: content,
+          storageId: storageId,
+          percentComplete: percentComplete,
+        },
       ],
     });
 

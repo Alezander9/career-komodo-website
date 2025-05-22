@@ -12,6 +12,7 @@ import Typewriter from "./komodo-text";
 
 export function Chat() {
   const [response, setResponse] = useState("");
+  const [percentComplete, setPercentComplete] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -58,14 +59,27 @@ export function Chat() {
       content: text,
       storageId: storageId,
       sender: "user",
+      percentComplete: undefined,
     });
 
     const res = await handleSendMessage(text);
 
+    if (!res) {
+      return;
+    }
+
+    const response = res.response;
+    const percentComplete = res.percent_complete;
+    const userInformation = res.user_information;
+    const missingInformation = res.missing_information;
+
+    setPercentComplete(percentComplete);
+
     await addMessage({
       chatId: chatId as Id<"chats">,
-      content: res || "",
+      content: response || "",
       storageId: undefined,
+      percentComplete: percentComplete,
       sender: "komodo",
     });
   };
@@ -135,6 +149,16 @@ export function Chat() {
               </div>
             </div>
             <SpeechToText onTranscription={handleTranscription} />
+            {percentComplete > 80 && (
+              <div>
+                <div className="text-sm text-gray-500">
+                  {percentComplete}% complete
+                </div>
+                <button className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50">
+                  See my recommendations!
+                </button>
+              </div>
+            )}
           </Card>
         )}
       </MainContent>
