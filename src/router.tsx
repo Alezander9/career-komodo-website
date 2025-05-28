@@ -68,7 +68,11 @@ const featureRoutes = [
   },
   { path: "/star", name: "StarMap", component: StarMapPage },
   { path: "/scraping", name: "Scraper", component: CuteScrapingPage },
-  { path: "/finalstar", name: "Final Star Map", component: CombinedStarMapPage },
+  {
+    path: "/finalstar",
+    name: "Final Star Map",
+    component: CombinedStarMapPage,
+  },
 ];
 
 // Protected route component
@@ -147,7 +151,7 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <MainLayout>
-          <StarMapPage />
+          <CombinedStarMapPage />
         </MainLayout>
       </ProtectedRoute>
     ),
@@ -161,7 +165,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-  path: "/mergedscrape",
+    path: "/mergedscrape",
     element: (
       <MainLayout>
         <CombinedStarMapPage />
