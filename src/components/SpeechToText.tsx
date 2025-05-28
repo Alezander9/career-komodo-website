@@ -1,7 +1,7 @@
 import { useReactMediaRecorder } from "react-media-recorder";
 import { useAction, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Id } from "@convex/_generated/dataModel";
 
 export function SpeechToText({
@@ -19,6 +19,7 @@ export function SpeechToText({
         mimeType: "audio/webm",
       },
     });
+  const [loading, setLoading] = useState(false);
   const transcribeAudio = useAction(api.actions.audioToText);
   const generateUploadUrl = useMutation(api.mutations.generateUploadUrl);
 
@@ -35,11 +36,13 @@ export function SpeechToText({
     });
     const { storageId } = await result.json();
 
+    setLoading(true);
     const recievedTranscription = await transcribeAudio({
       storageId,
       fileName: "audio.webm",
       deleteAudio: false,
     });
+    setLoading(false);
 
     console.log("Transcription:", recievedTranscription.text);
     onTranscription({ text: recievedTranscription.text, storageId });
@@ -57,23 +60,21 @@ export function SpeechToText({
         <button
           className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
           onClick={startRecording}
-          disabled={status === "recording"}
+          disabled={status === "recording" || loading}
         >
-          Start Recording
+          {loading ? "Loading..." : "Start Recording"}
         </button>
       )}
       {status === "recording" && (
-        <>
-          <button
-            className="bg-red-500 text-white p-2 rounded-md disabled:opacity-50"
-            onClick={() => {
-              stopRecording();
-            }}
-            disabled={status !== "recording"}
-          >
-            Stop Recording
-          </button>
-        </>
+        <button
+          className="bg-red-500 text-white p-2 rounded-md disabled:opacity-50"
+          onClick={() => {
+            stopRecording();
+          }}
+          disabled={status !== "recording"}
+        >
+          Stop Recording
+        </button>
       )}
     </div>
   );

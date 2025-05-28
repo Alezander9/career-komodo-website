@@ -131,7 +131,9 @@ export function Chat() {
       <MainContent>
         {chat && (
           <Card>
-            <H1>Chat {new Date(chat.createdAt).toLocaleString()}</H1>
+            <div className="text-sm text-gray-500 mb-5">
+              {new Date(chat.createdAt).toLocaleString()}
+            </div>
             <div className="flex-1 overflow-y-auto mb-4">
               <ChatMessageList
                 messages={chat.messages
@@ -157,13 +159,10 @@ export function Chat() {
               </div>
             </div>
             <SpeechToText onTranscription={handleTranscription} />
-            {percentComplete > 80 && (
-              <div>
-                <div className="text-sm text-gray-500">
-                  {percentComplete}% complete
-                </div>
+            {percentComplete >= 80 && (
+              <div className="flex justify-center my-3">
                 <button
-                  className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
+                  className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50 w-full"
                   onClick={() => {
                     navigate(`/starmap/${chatId}`);
                   }}
