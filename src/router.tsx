@@ -23,6 +23,8 @@ import { AllChatsPage } from "./pages/chat-test";
 import { Chat } from "./pages/chat";
 import { FAQPage } from "./pages/faq";
 import { MainLayout } from "@/components/layout";
+import { CuteScrapingPage } from "./pages/scraping";
+import { CombinedStarMapPage } from "./pages/mergedstarmap";
 
 // Feature routes (removed unnecessary routes)
 const featureRoutes = [
@@ -30,7 +32,6 @@ const featureRoutes = [
   { path: "/komodo-text", name: "Chat with Komodo", component: KomodoTextPage },
   { path: "/opportunities", name: "Opportunities", component: OpportunitiesPage },
   { path: "/audio-recording", name: "Audio Recording", component: AudioRecordingPage },
-  { path: "/starmap", name: "Star Map", component: StarMapPage },
   { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
   { path: "/welcome", name: "Welcome Page", component: LandingPage },
   { path: "/mariem-landing", name: "Mariem's Landing", component: MariemLandingPage },
@@ -40,7 +41,9 @@ const featureRoutes = [
   { path: "/your-starmap-loading", name: "Starmap Loading", component: YourStarmapLoadingPage },
   { path: "/faq", name: "FAQ", component: FAQPage },
   { path: "/old-home", name: "Old Home", component: () => <HomePage featureRoutes={featureRoutes} /> },
-  { path: "/star", name: "StarMap", component: StarMapPage },
+  // { path: "/star", name: "StarMap", component: StarMapPage },
+  { path: "/scraping", name: "Scraper", component: CuteScrapingPage },
+  { path: "/finalstar", name: "Final Star Map", component: CombinedStarMapPage },
 ];
 
 // Protected route component
@@ -120,6 +123,14 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <OpportunityDetailPage />
       </ProtectedRoute>
+    ),
+  },
+  {
+  path: "/mergedscrape",
+    element: (
+      <MainLayout>
+        <CombinedStarMapPage />
+      </MainLayout>
     ),
   },
   ...featureRoutes.map((route) => ({
