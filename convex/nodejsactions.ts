@@ -3,6 +3,8 @@
 import { action } from "./_generated/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { v } from "convex/values";
+import fetch from "node-fetch";
+import * as cheerio from "cheerio";
 
 const CLAUDE_SYSTEM_PROMPT = `
 You are a fun creative and helpful career advisor and therapist. You are the Career Komodo, a talking Komodo who helps people figure out career options at all stages in life by asking good questions.
@@ -293,4 +295,143 @@ export const generateStarMapResponse = action({
       };
     }
   },
+});
+
+// type Args = {
+//   keywords: string[]; // Now an array!
+//   location: string;
+// };
+
+// export const scrapeLinkedInJobs = action(async (_ctx, args: Args) => {
+//   const headers = {
+//     "User-Agent":
+//       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
+//   };
+//   const totalJobs = 50;
+//   const jobsPerPage = 25;
+//   const jobIds: string[] = [];
+//   const jobsData: any[] = [];
+
+//   // Join keywords with spaces, encode for URL
+//   const combinedKeywords = encodeURIComponent(args.keywords.join(" "));
+//   const encodedLocation = encodeURIComponent(args.location);
+
+//   // 1. Collect job IDs
+//   for (let i = 0; i < Math.ceil(totalJobs / jobsPerPage); i++) {
+//     const url = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${combinedKeywords}&location=${encodedLocation}&start=${i * jobsPerPage}`;
+//     const res = await fetch(url, { headers });
+//     const text = await res.text();
+//     const $ = cheerio.load(text);
+//     $("li").each((_, elem) => {
+//       const jobDiv = $(elem).find("div.base-card");
+//       const urn = jobDiv.attr("data-entity-urn");
+//       if (urn) {
+//         const jobId = urn.split(":")[3];
+//         jobIds.push(jobId);
+//       }
+//     });
+//   }
+
+//   // 2. Scrape job details (unchanged)
+//   for (const jobId of jobIds) {
+//     const jobInfo: any = {};
+//     const jobUrl = `https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/${jobId}`;
+//     const res = await fetch(jobUrl, { headers });
+//     const text = await res.text();
+//     const $ = cheerio.load(text);
+
+//     jobInfo.company =
+//       $("div.top-card-layout__card a img").attr("alt") || null;
+//     jobInfo["job-title"] =
+//       $("div.top-card-layout__entity-info a").text().trim() || null;
+//     const levelText = $("ul.description__job-criteria-list li")
+//       .first()
+//       .text();
+//     jobInfo.level = levelText
+//       ? levelText.replace("Seniority level", "").trim()
+//       : null;
+
+//     if (Object.values(jobInfo).some((val) => val)) {
+//       jobsData.push(jobInfo);
+//     }
+//   }
+
+//   console.log(jobsData);
+
+//   return jobsData;
+// });
+
+type Args = {
+  keywords: string[];
+  location: string;
+};
+
+function cleanJobTitle(text: string): string {
+  // Remove newlines and excessive whitespace
+  let cleaned = text.replace(/\s+/g, " ");
+  // Remove everything after 'See who' or 'User Agreement' or 'Apply on company website'
+  cleaned = cleaned.split(/See who|User Agreement|Apply on company website/i)[0].trim();
+  return cleaned;
+}
+
+export const scrapeLinkedInJobs = action(async (_ctx, args: Args) => {
+  const headers = {
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
+  };
+  const totalJobs = 50;
+  const jobsPerPage = 25;
+  const jobIds: string[] = [];
+  const jobsData: any[] = [];
+
+  // Join keywords with spaces, encode for URL
+  const combinedKeywords = encodeURIComponent(args.keywords.join(" "));
+  const encodedLocation = encodeURIComponent(args.location);
+
+  // 1. Collect job IDs
+  for (let i = 0; i < Math.ceil(totalJobs / jobsPerPage); i++) {
+    const url = `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${combinedKeywords}&location=${encodedLocation}&start=${i * jobsPerPage}`;
+    const res = await fetch(url, { headers });
+    const text = await res.text();
+    const $ = cheerio.load(text);
+    $("li").each((_, elem) => {
+      const jobDiv = $(elem).find("div.base-card");
+      const urn = jobDiv.attr("data-entity-urn");
+      if (urn) {
+        const jobId = urn.split(":")[3];
+        jobIds.push(jobId);
+      }
+    });
+  }
+
+  // 2. Scrape job details (with title cleaning)
+  for (const jobId of jobIds) {
+    const jobInfo: any = {};
+    const jobUrl = `https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/${jobId}`;
+    const res = await fetch(jobUrl, { headers });
+    const text = await res.text();
+    const $ = cheerio.load(text);
+
+    jobInfo.company =
+      $("div.top-card-layout__card a img").attr("alt") || null;
+
+    // Clean the job title
+    const rawTitle = $("div.top-card-layout__entity-info a").text() || "";
+    jobInfo["job-title"] = cleanJobTitle(rawTitle);
+
+    const levelText = $("ul.description__job-criteria-list li")
+      .first()
+      .text();
+    jobInfo.level = levelText
+      ? levelText.replace("Seniority level", "").trim()
+      : null;
+
+    if (Object.values(jobInfo).some((val) => val)) {
+      jobsData.push(jobInfo);
+    }
+  }
+
+  console.log(jobsData);
+
+  return jobsData;
 });

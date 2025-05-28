@@ -91,7 +91,6 @@ Description: Free Udemy Courses with a Library Card are available through partne
 Name: LinkedIn Learning
 Description: Free LinkedIn Learning with a Library Card allows library members to access LinkedIn Learning's full course library covering tech, business, design, and personal development topics. It's completely free. This benefit, available through many public libraries, offers high-quality courses taught by industry experts, and can be a valuable addition for anyone looking to build professional skills or supplement a self-taught curriculum without paying for a subscription.
 `
-
 const userProfile = "A young man named Ryan who is from Illinois. He likes coding, but doesn't have much experience. He loves komodo dragons. He is extroverted and loves league of legends and JJK."
 
 export function StarMapPage() {

@@ -20,6 +20,7 @@ import { StarMapBackgroundPage } from "./pages/star-map-background";
 import { YourStarmapLoadingPage } from "./pages/your-starmap-loading";
 import { AllChatsPage } from "./pages/chat-test";
 import { Chat } from "./pages/chat";
+import { ScrapedPage } from "./pages/scraped";
 
 // Feature routes (removed unnecessary routes)
 const featureRoutes = [
@@ -30,6 +31,7 @@ const featureRoutes = [
   { path: "/tutorial", name: "Tutorial", component: TutorialPage },
   { path: "/old-home", name: "Old Home", component: HomePage },
   { path: "/star", name: "StarMap", component: StarMapPage },
+  { path: "/scraping", name: "Scraper", component: ScrapedPage },
 ];
 
 // Protected route component
