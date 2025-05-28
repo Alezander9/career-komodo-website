@@ -163,7 +163,7 @@ export function StarMapPage() {
   }, [mockAIJSON]);
 
   useEffect(() => {
-    if (chat) {
+    if (chat && !mockAIJSON) {
       fetchStarMap();
     }
   }, [chat]);
