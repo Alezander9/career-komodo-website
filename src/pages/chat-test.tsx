@@ -16,19 +16,21 @@ export function AllChatsPage() {
   return (
     <PageContainer>
       <MainContent>
-        <div className="flex flex-col gap-4">
-          <H1>Chats</H1>
+        <div className="flex flex-col gap-4 max-w-md mx-auto">
+          <div className="text-4xl font-bold text-center w-full mb-4">
+            Conversations
+          </div>
+          <Button onClick={handleCreateChat}>+ New Conversation</Button>
           <div className="flex flex-col gap-4">
             {chats &&
               chats.map((chat) => (
                 <Link to={`/chat/${chat._id}`}>
                   <Card key={chat._id}>
-                    Chat created on {new Date(chat.createdAt).toLocaleString()}
+                    {new Date(chat.createdAt).toLocaleString()}
                   </Card>
                 </Link>
               ))}
           </div>
-          <Button onClick={handleCreateChat}>Create Chat</Button>
         </div>
       </MainContent>
     </PageContainer>

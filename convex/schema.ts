@@ -35,6 +35,7 @@ export default defineSchema({
         sender: v.union(v.literal("user"), v.literal("komodo")),
         message: v.string(),
         storageId: v.optional(v.id("_storage")),
+        percentComplete: v.optional(v.number()),
       })
     ),
   }).index("by_user_id", ["userId"]),

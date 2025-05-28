@@ -30,18 +30,43 @@ import { CombinedStarMapPage } from "./pages/mergedstarmap";
 const featureRoutes = [
   { path: "/chats", name: "Chats", component: AllChatsPage },
   { path: "/komodo-text", name: "Chat with Komodo", component: KomodoTextPage },
-  { path: "/opportunities", name: "Opportunities", component: OpportunitiesPage },
-  { path: "/audio-recording", name: "Audio Recording", component: AudioRecordingPage },
+  {
+    path: "/opportunities",
+    name: "Opportunities",
+    component: OpportunitiesPage,
+  },
+  {
+    path: "/audio-recording",
+    name: "Audio Recording",
+    component: AudioRecordingPage,
+  },
+  { path: "/starmap", name: "Star Map", component: StarMapPage },
   { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
   { path: "/welcome", name: "Welcome Page", component: LandingPage },
-  { path: "/mariem-landing", name: "Mariem's Landing", component: MariemLandingPage },
+  {
+    path: "/mariem-landing",
+    name: "Mariem's Landing",
+    component: MariemLandingPage,
+  },
   { path: "/about-us", name: "About Us", component: AboutUsPage },
   { path: "/tutorial", name: "Tutorial", component: TutorialPage },
-  { path: "/star-map-background", name: "Star Map Background", component: StarMapBackgroundPage },
-  { path: "/your-starmap-loading", name: "Starmap Loading", component: YourStarmapLoadingPage },
+  {
+    path: "/star-map-background",
+    name: "Star Map Background",
+    component: StarMapBackgroundPage,
+  },
+  {
+    path: "/your-starmap-loading",
+    name: "Starmap Loading",
+    component: YourStarmapLoadingPage,
+  },
   { path: "/faq", name: "FAQ", component: FAQPage },
-  { path: "/old-home", name: "Old Home", component: () => <HomePage featureRoutes={featureRoutes} /> },
-  // { path: "/star", name: "StarMap", component: StarMapPage },
+  {
+    path: "/old-home",
+    name: "Old Home",
+    component: () => <HomePage featureRoutes={featureRoutes} />,
+  },
+  { path: "/star", name: "StarMap", component: StarMapPage },
   { path: "/scraping", name: "Scraper", component: CuteScrapingPage },
   { path: "/finalstar", name: "Final Star Map", component: CombinedStarMapPage },
 ];
@@ -113,6 +138,16 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <MainLayout>
           <Chat />
+        </MainLayout>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/starmap/:chatId",
+    element: (
+      <ProtectedRoute>
+        <MainLayout>
+          <StarMapPage />
         </MainLayout>
       </ProtectedRoute>
     ),
