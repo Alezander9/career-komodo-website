@@ -375,7 +375,8 @@ export const generateStarMapResponse = action({
 
       if (!input.starData || typeof input.starData !== "object") {
         throw new Error(
-          "Missing or invalid 'starData' field in Claude's response"
+          "Missing or invalid 'starData' field in Claude's response: " +
+            JSON.stringify(input)
         );
       }
 
@@ -425,7 +426,9 @@ function cleanJobTitle(text: string): string {
   // Remove newlines and excessive whitespace
   let cleaned = text.replace(/\s+/g, " ");
   // Remove everything after 'See who' or 'User Agreement' or 'Apply on company website'
-  cleaned = cleaned.split(/See who|User Agreement|Apply on company website/i)[0].trim();
+  cleaned = cleaned
+    .split(/See who|User Agreement|Apply on company website/i)[0]
+    .trim();
   return cleaned;
 }
 
@@ -467,16 +470,13 @@ export const scrapeLinkedInJobs = action(async (_ctx, args: Args) => {
     const text = await res.text();
     const $ = cheerio.load(text);
 
-    jobInfo.company =
-      $("div.top-card-layout__card a img").attr("alt") || null;
+    jobInfo.company = $("div.top-card-layout__card a img").attr("alt") || null;
 
     // Clean the job title
     const rawTitle = $("div.top-card-layout__entity-info a").text() || "";
     jobInfo["job-title"] = cleanJobTitle(rawTitle);
 
-    const levelText = $("ul.description__job-criteria-list li")
-      .first()
-      .text();
+    const levelText = $("ul.description__job-criteria-list li").first().text();
     jobInfo.level = levelText
       ? levelText.replace("Seniority level", "").trim()
       : null;
