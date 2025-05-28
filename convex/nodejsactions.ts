@@ -138,8 +138,8 @@ You are a career mapping assistant.
 
 Given the following information:
 
-User Profile:
-A text description of a user's background, skills, interests, and career goals.
+Conversation History with User:
+A list of messages between you and the user, exploring their career goals and interests.
 
 List of Opportunities:
 A list of career opportunities, each described in text form. Each opportunity may include a name, a description, and optionally useful links.
@@ -177,8 +177,8 @@ IMPORTANT:
 
 Input:
 
-User Profile:
-{user_profile}
+Conversation History with User:
+{conversation_history}
 
 Opportunities:
 {opportunities_list}
@@ -190,7 +190,12 @@ OUTPUT ONLY JSON. ONLY REAL JSON. NOTHING ELSE.
 
 export const generateStarMapResponse = action({
   args: {
-    userProfile: v.string(),
+    conversationHistory: v.array(
+      v.object({
+        sender: v.union(v.literal("user"), v.literal("komodo")),
+        message: v.string(),
+      })
+    ),
     opportunitiesBlock: v.string(),
   },
   handler: async (ctx, args) => {
@@ -199,8 +204,8 @@ export const generateStarMapResponse = action({
     });
 
     const prompt = `
-    User Profile:
-    ${args.userProfile}
+    Conversation History with User:
+    ${args.conversationHistory}
 
     Opportunities:
     ${args.opportunitiesBlock}

@@ -1,7 +1,7 @@
 import { PageContainer, MainContent, Card } from "@/components/layout";
 import { H1 } from "@/components/ui/typography";
 import { api } from "@convex/_generated/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { ChatMessageList } from "@/components/chat-message";
 import { SpeechToText } from "@/components/SpeechToText";
@@ -15,7 +15,7 @@ export function Chat() {
   const [percentComplete, setPercentComplete] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const navigate = useNavigate();
   const { chatId } = useParams();
   const chat = useQuery(api.queries.getChat, { chatId: chatId as Id<"chats"> });
   const addMessage = useMutation(api.mutations.addMessageToChat);
@@ -43,6 +43,14 @@ export function Chat() {
       chat.messages[chat.messages.length - 1].sender === "komodo"
     ) {
       setResponse(chat.messages[chat.messages.length - 1].message);
+      if (
+        chat.messages[chat.messages.length - 1].percentComplete !== undefined
+      ) {
+        setPercentComplete(
+          chat.messages[chat.messages.length - 1].percentComplete ??
+            percentComplete
+        );
+      }
       setLoading(false);
     }
   }, [chat?.messages]);
@@ -145,7 +153,7 @@ export function Chat() {
                 {loading && (
                   <Typewriter text="Komodo is thinking..." speed={20} />
                 )}
-                {response && <Typewriter text={response} speed={20} />}
+                {response && <Typewriter text={response} speed={5} />}
               </div>
             </div>
             <SpeechToText onTranscription={handleTranscription} />
@@ -154,7 +162,12 @@ export function Chat() {
                 <div className="text-sm text-gray-500">
                   {percentComplete}% complete
                 </div>
-                <button className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50">
+                <button
+                  className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
+                  onClick={() => {
+                    navigate(`/starmap/${chatId}`);
+                  }}
+                >
                   See my recommendations!
                 </button>
               </div>
