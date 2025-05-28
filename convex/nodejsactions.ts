@@ -157,7 +157,7 @@ js
   "starData": {
     "OpportunityA": {
       "label": "💫 OpportunityA",
-      "description": "Short, engaging description of OpportunityA.",
+      "description": "Short, engaging description of OpportunityA and how it is relevant to the user's career goals and interests.",
       "links": [{ "text": "Link Text", "url": "https://example.com" }]
     },
     ...
@@ -174,6 +174,7 @@ IMPORTANT:
 3. "end" should include at least one opportunity that represents an advanced option.
 4. Every opportunity name used in "adjacency" must exist as a key in "starData".
 5. The "label" for each opportunity should include a relevant emoji.
+6. The "description" for each opportunity should be a short, engaging description of how the opportunity is relevant to the user's career goals and interests.
 
 Input:
 
@@ -254,7 +255,7 @@ export const generateStarMapResponse = action({
                       description: {
                         type: "string",
                         description:
-                          "A brief description of what this opportunity offers",
+                          "A brief description of what this opportunity is and how it is relevant to the user's career goals and interests.",
                       },
                       links: {
                         type: "array",

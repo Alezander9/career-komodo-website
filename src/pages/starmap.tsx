@@ -163,6 +163,12 @@ export function StarMapPage() {
   }, [mockAIJSON]);
 
   useEffect(() => {
+    if (chat) {
+      fetchStarMap();
+    }
+  }, [chat]);
+
+  useEffect(() => {
     const handleResize = () => {
       const headerHeight = 72;
       setDimensions({
