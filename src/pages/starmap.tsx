@@ -1,13 +1,14 @@
 import { api } from "../../convex/_generated/api";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SignOutButton } from "@clerk/clerk-react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
 import { PageContainer, MainContent } from "@/components/layout";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { useAction } from "convex/react";
+import { useAction, useQuery } from "convex/react";
+import { Id } from "@convex/_generated/dataModel";
 
 export type JobOpportunity = {
   title: string;
@@ -52,11 +53,17 @@ interface StarMapJSON {
 }
 
 function mapToGraphData(adjacency: Record<string, string[]>): GraphData {
-  const nodes = Object.keys(adjacency).map(id => ({ id }));
+  const nodes = Object.keys(adjacency).map((id) => ({ id }));
   const links: LinkType[] = [];
   for (const [source, targets] of Object.entries(adjacency)) {
     for (const target of targets) {
-      if (!links.find(l => (l.source === target && l.target === source) || (l.source === source && l.target === target))) {
+      if (
+        !links.find(
+          (l) =>
+            (l.source === target && l.target === source) ||
+            (l.source === source && l.target === target)
+        )
+      ) {
         links.push({ source, target });
       }
     }
@@ -103,17 +110,23 @@ function mapToGraphData(adjacency: Record<string, string[]>): GraphData {
 // Description: Free LinkedIn Learning with a Library Card allows library members to access LinkedIn Learning's full course library covering tech, business, design, and personal development topics. It's completely free. This benefit, available through many public libraries, offers high-quality courses taught by industry experts, and can be a valuable addition for anyone looking to build professional skills or supplement a self-taught curriculum without paying for a subscription.
 // `
 
-const userProfile = "A young man named Ryan who is from Illinois. He likes coding, but doesn't have much experience. He loves komodo dragons. He is extroverted and loves league of legends and JJK."
+const userProfile =
+  "A young man named Ryan who is from Illinois. He likes coding, but doesn't have much experience. He loves komodo dragons. He is extroverted and loves league of legends and JJK.";
+
+interface StarMapPageProps {
+  opportunities: JobOpportunity[];
+}
 
 export function StarMapPage({ opportunities }: StarMapPageProps) {
+  const { chatId } = useParams();
+  const chat = useQuery(api.queries.getChat, { chatId: chatId as Id<"chats"> });
 
   const opportunitiesBlock = opportunities
-  .map(
-    (job) =>
-      `Name: ${job.title}\nDescription: ${job.company} - ${job.location}\nLink: ${job.link}\n`
-  )
-  .join("\n");
-
+    .map(
+      (job) =>
+        `Name: ${job.title}\nDescription: ${job.company} - ${job.location}\nLink: ${job.link}\n`
+    )
+    .join("\n");
 
   const generateStarMap = useAction(api.nodejsactions.generateStarMapResponse);
   const [mockAIJSON, setMockAIJSON] = useState<StarMapJSON | null>(null);
@@ -121,10 +134,16 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
   const [error, setError] = useState<string | null>(null);
 
   const [selectedStar, setSelectedStar] = useState<NodeType | null>(null);
-  const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
+  const [graphData, setGraphData] = useState<GraphData>({
+    nodes: [],
+    links: [],
+  });
   const [starData, setStarData] = useState<StarData>({});
   const [spinning, setSpinning] = useState(true);
-  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const [dimensions, setDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
   const navigate = useNavigate();
   const fgRef = useRef<any>(null);
   const angleRef = useRef(0);
@@ -134,7 +153,14 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
     setLoading(true);
     setError(null);
     try {
-      const result = await generateStarMap({ userProfile, opportunitiesBlock });
+      const result = await generateStarMap({
+        conversationHistory:
+          chat?.messages.map((message) => ({
+            sender: message.sender,
+            message: message.message,
+          })) ?? [],
+        opportunitiesBlock,
+      });
       if (result.success) {
         setMockAIJSON(result.response);
         console.log("Fetched StarMap:", result.response);
@@ -143,7 +169,9 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
         console.error("Error fetching StarMap:", result.error);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred"
+      );
       console.error("Exception fetching StarMap:", err);
     } finally {
       setLoading(false);
@@ -157,9 +185,18 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
   }, [mockAIJSON]);
 
   useEffect(() => {
+    if (chat && !mockAIJSON) {
+      fetchStarMap();
+    }
+  }, [chat]);
+
+  useEffect(() => {
     const handleResize = () => {
       const headerHeight = 72;
-      setDimensions({ width: window.innerWidth, height: window.innerHeight - headerHeight });
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight - headerHeight,
+      });
     };
     window.addEventListener("resize", handleResize);
     handleResize();
@@ -175,7 +212,7 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
       {
         x: distance * Math.sin(angle),
         y: distance * 0.1 + 10 * Math.sin(angle * 0.7),
-        z: distance * Math.cos(angle)
+        z: distance * Math.cos(angle),
       },
       { x: 0, y: 0, z: 0 },
       0
@@ -234,9 +271,10 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
         <div className="flex flex-col items-center justify-center h-full bg-black text-white">
           <div className="text-3xl mb-6">Ready to Explore Career Paths?</div>
           <div className="text-xl mb-10 max-w-xl text-center">
-            Click the button below to generate a personalized star map of career opportunities based on your profile.
+            Click the button below to generate a personalized star map of career
+            opportunities based on your profile.
           </div>
-          <Button 
+          <Button
             size="lg"
             onClick={fetchStarMap}
             className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 text-xl"
@@ -257,7 +295,7 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
         height={dimensions.height}
         graphData={graphData}
         backgroundColor="#000"
-        nodeColor={node => {
+        nodeColor={(node) => {
           if (startNodes.has(node.id)) return "green";
           if (endNodes.has(node.id)) return "red";
           return "#fff";
@@ -267,23 +305,27 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
           const group = new THREE.Group();
 
           let color = 0xffffff;
-          if (startNodes.has(node.id)) color = 0x51d6ff; // green
+          if (startNodes.has(node.id))
+            color = 0x51d6ff; // green
           else if (endNodes.has(node.id)) color = 0xffd60a; // red
 
           const geometry = new THREE.SphereGeometry(4, 16, 16);
           const material = new THREE.MeshBasicMaterial({
             color,
             transparent: true,
-            opacity: 0.95
+            opacity: 0.95,
           });
           const sphere = new THREE.Mesh(geometry, material);
 
           const glowMaterial = new THREE.MeshBasicMaterial({
             color: 0x88ccff,
             transparent: true,
-            opacity: 0.25
+            opacity: 0.25,
           });
-          const glow = new THREE.Mesh(new THREE.SphereGeometry(8, 16, 16), glowMaterial);
+          const glow = new THREE.Mesh(
+            new THREE.SphereGeometry(8, 16, 16),
+            glowMaterial
+          );
 
           group.add(glow);
           group.add(sphere);
@@ -297,7 +339,15 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
   };
 
   return (
-    <div style={{ height: "100vh", width: "100vw", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+    <div
+      style={{
+        height: "100vh",
+        width: "100vw",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
       <div
         ref={mapAreaRef}
         style={{
@@ -306,7 +356,7 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
           position: "relative",
           width: "100vw",
           background: "#000",
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
         {renderContent()}
@@ -326,7 +376,7 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
               userSelect: "none",
               zIndex: 20,
               fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-              whiteSpace: "nowrap"
+              whiteSpace: "nowrap",
             }}
           >
             ✨ Spinning for vibes... ✨
@@ -348,14 +398,17 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
               borderRadius: 8,
               padding: 16,
               zIndex: 30,
-              minWidth: 240
+              minWidth: 240,
             }}
           >
             <div>
               <h2 style={{ fontSize: "1.2rem", marginBottom: 4 }}>
                 {starData[selectedStar!.id]?.label ?? `⭐ ${selectedStar!.id}`}
               </h2>
-              <p style={{ fontSize: "0.9rem" }}>{starData[selectedStar!.id]?.description ?? "No description available."}</p>
+              <p style={{ fontSize: "0.9rem" }}>
+                {starData[selectedStar!.id]?.description ??
+                  "No description available."}
+              </p>
               {starData[selectedStar!.id]?.links && (
                 <ul style={{ marginTop: 8 }}>
                   {starData[selectedStar!.id]!.links!.map((link, i) => (
@@ -380,7 +433,7 @@ export function StarMapPage({ opportunities }: StarMapPageProps) {
                 color: "#fff",
                 border: "none",
                 borderRadius: 4,
-                padding: "4px 12px"
+                padding: "4px 12px",
               }}
               onClick={() => setSelectedStar(null)}
             >
