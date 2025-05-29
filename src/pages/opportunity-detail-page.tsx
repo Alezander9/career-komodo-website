@@ -12,7 +12,7 @@ export function OpportunityDetailPage() {
 
   useEffect(() => {
     // Fetch and parse opportunities data
-    fetch('/data/opportunities.txt')
+    fetch('/opportunities.txt')
       .then(response => response.text())
       .then(text => {
         const opportunities = parseOpportunities(text);

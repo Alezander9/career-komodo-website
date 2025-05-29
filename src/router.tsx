@@ -2,80 +2,34 @@ import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
+  RouteObject,
 } from "react-router-dom";
 import { useConvexAuth } from "convex/react";
-import { LandingPage } from "./pages/landing-page";
+import { ComponentType } from "react";
+
+// Page imports
+import { MainLayout } from "@/components/layout";
 import { HomePage } from "./pages/home-page";
-import { TestPage } from "./pages/test-page";
-import { AudioRecordingPage } from "./pages/audio-recording";
-import { KomodoTextPage } from "./pages/komodo-text";
 import { LoadingScreen } from "./components/loading-screen";
-import { ClaudeTest } from "./pages/ClaudeTest";
-import { StarMapPage } from "./pages/starmap";
 import { MariemLandingPage } from "./pages/mariem-landing";
 import { OpportunitiesPage } from "./pages/opportunities-page";
 import { OpportunityDetailPage } from "./pages/opportunity-detail-page";
-import { AboutUsPage } from "./pages/about-us";
-import { TutorialPage } from "./pages/tutorial-page";
-import { StarMapBackgroundPage } from "./pages/star-map-background";
-import { YourStarmapLoadingPage } from "./pages/your-starmap-loading";
+// import { TutorialPage } from "./pages/tutorial-page";
 import { AllChatsPage } from "./pages/chat-test";
 import { Chat } from "./pages/chat";
+import { AboutUsPage } from "./pages/about-us";
 import { FAQPage } from "./pages/faq";
-import { MainLayout } from "@/components/layout";
-import { CuteScrapingPage } from "./pages/scraping";
+// import { CuteScrapingPage } from "./pages/scraping";
 import { CombinedStarMapPage } from "./pages/mergedstarmap";
 
-// Feature routes (removed unnecessary routes)
-const featureRoutes = [
-  { path: "/chats", name: "Chats", component: AllChatsPage },
-  { path: "/komodo-text", name: "Chat with Komodo", component: KomodoTextPage },
-  {
-    path: "/opportunities",
-    name: "Opportunities",
-    component: OpportunitiesPage,
-  },
-  {
-    path: "/audio-recording",
-    name: "Audio Recording",
-    component: AudioRecordingPage,
-  },
-  { path: "/starmap", name: "Star Map", component: StarMapPage },
-  { path: "/claude-test", name: "Claude Test", component: ClaudeTest },
-  { path: "/welcome", name: "Welcome Page", component: LandingPage },
-  {
-    path: "/mariem-landing",
-    name: "Mariem's Landing",
-    component: MariemLandingPage,
-  },
-  { path: "/about-us", name: "About Us", component: AboutUsPage },
-  { path: "/tutorial", name: "Tutorial", component: TutorialPage },
-  {
-    path: "/star-map-background",
-    name: "Star Map Background",
-    component: StarMapBackgroundPage,
-  },
-  {
-    path: "/your-starmap-loading",
-    name: "Starmap Loading",
-    component: YourStarmapLoadingPage,
-  },
-  { path: "/faq", name: "FAQ", component: FAQPage },
-  {
-    path: "/old-home",
-    name: "Old Home",
-    component: () => <HomePage featureRoutes={featureRoutes} />,
-  },
-  { path: "/star", name: "StarMap", component: StarMapPage },
-  { path: "/scraping", name: "Scraper", component: CuteScrapingPage },
-  {
-    path: "/finalstar",
-    name: "Final Star Map",
-    component: CombinedStarMapPage,
-  },
-];
+// Types
+interface FeatureRoute {
+  path: string;
+  name: string;
+  component: ComponentType;
+}
 
-// Protected route component
+// Route Guards
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
 
@@ -90,7 +44,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-// Public route component (only accessible when not authenticated)
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useConvexAuth();
 
@@ -105,65 +58,70 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-// Create router
+// Route factories
+function createProtectedRoute(Component: ComponentType, withLayout = true): RouteObject["element"] {
+  const element = withLayout ? (
+    <MainLayout>
+      <Component />
+    </MainLayout>
+  ) : (
+    <Component />
+  );
+
+  return <ProtectedRoute>{element}</ProtectedRoute>;
+}
+
+function createPublicRoute(Component: ComponentType): RouteObject["element"] {
+  return (
+    <PublicRoute>
+      <Component />
+    </PublicRoute>
+  );
+}
+
+// Wrapper components for components that need props
+// (None needed currently)
+
+// Feature routes configuration
+const featureRoutes: FeatureRoute[] = [
+  { path: "/chats", name: "Chats", component: AllChatsPage },
+  { path: "/opportunities", name: "Opportunities", component: OpportunitiesPage },
+  { path: "/about-us", name: "About Us", component: AboutUsPage },
+  // { path: "/tutorial", name: "Tutorial", component: TutorialPage },
+  { path: "/faq", name: "FAQ", component: FAQPage },
+  // { path: "/scraping", name: "Scraper", component: CuteScrapingPage },
+  { path: "/finalstar", name: "Final Star Map", component: CombinedStarMapPage },
+];
+
+// Main router configuration
 const router = createBrowserRouter([
+  // Public routes
   {
     path: "/",
-    element: (
-      <PublicRoute>
-        <MariemLandingPage />
-      </PublicRoute>
-    ),
+    element: createPublicRoute(MariemLandingPage),
   },
+
+  // Protected main routes
   {
     path: "/home",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <HomePage featureRoutes={featureRoutes} />
-        </MainLayout>
-        <MariemLandingPage />
-      </ProtectedRoute>
-    ),
+    element: createProtectedRoute(HomePage),
   },
-  {
-    path: "/test",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <TestPage />
-        </MainLayout>
-      </ProtectedRoute>
-    ),
-  },
+
+  // Protected dynamic routes
   {
     path: "/chat/:chatId",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <Chat />
-        </MainLayout>
-      </ProtectedRoute>
-    ),
+    element: createProtectedRoute(Chat),
   },
   {
     path: "/starmap/:chatId",
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <CombinedStarMapPage />
-        </MainLayout>
-      </ProtectedRoute>
-    ),
+    element: createProtectedRoute(CombinedStarMapPage),
   },
   {
     path: "/opportunities/:opportunityId",
-    element: (
-      <ProtectedRoute>
-        <OpportunityDetailPage />
-      </ProtectedRoute>
-    ),
+    element: createProtectedRoute(OpportunityDetailPage, false),
   },
+
+  // Special routes (mixed protection)
   {
     path: "/mergedscrape",
     element: (
@@ -172,18 +130,18 @@ const router = createBrowserRouter([
       </MainLayout>
     ),
   },
-  ...featureRoutes.map((route) => ({
+
+  // Feature routes (generated from configuration)
+  ...featureRoutes.map((route): RouteObject => ({
     path: route.path,
-    element: (
-      <ProtectedRoute>
-        <MainLayout>
-          <route.component />
-        </MainLayout>
-      </ProtectedRoute>
-    ),
+    element: createProtectedRoute(route.component),
   })),
 ]);
 
 export function Router() {
   return <RouterProvider router={router} />;
 }
+
+// Export feature routes for use in other components
+export { featureRoutes };
+export type { FeatureRoute };

@@ -6,13 +6,13 @@ export function Navbar() {
   const navigate = useNavigate();
 
   const navItems = [
-    { label: "Chat with Komodo", path: "/komodo-text" },
+    { label: "Chat", path: "/chats" },
+    // { label: "Chat with Komodo", path: "/komodo-text" },
     { label: "Opportunities", path: "/opportunities" },
     { label: "Star Map", path: "/finalstar" },
-    { label: "Audio Recording", path: "/audio-recording" },
-    { label: "Chats", path: "/chats" },
-    { label: "Tutorial", path: "/tutorial" },
-    { label: "About Us", path: "/about-us" },
+    // { label: "Audio Recording", path: "/audio-recording" },
+    // { label: "Tutorial", path: "/tutorial" },
+    // { label: "About Us", path: "/about-us" },
     { label: "FAQ", path: "/faq" },
   ];
 

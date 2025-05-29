@@ -14,11 +14,7 @@ interface FeatureRoute {
   component?: React.ComponentType<any>;
 }
 
-interface HomePageProps {
-  featureRoutes: FeatureRoute[];
-}
-
-export function HomePage({ featureRoutes }: HomePageProps) {
+export function HomePage() {
   const { user } = useUser();
   const navigate = useNavigate();
   const createUser = useMutation(api.mutations.createUser);
