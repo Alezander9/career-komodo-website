@@ -3,13 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer, MainContent, Card } from "@/components/layout";
 import { H1, P } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/logo";
-import { SignInButton, useUser } from "@clerk/clerk-react";
 import { Opportunity, parseOpportunities } from "@/lib/opportunities";
 
 export function OpportunityDetailPage() {
   const { opportunityId } = useParams();
-  const { isSignedIn } = useUser();
   const navigate = useNavigate();
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
 
@@ -32,18 +29,17 @@ export function OpportunityDetailPage() {
   if (!opportunity) {
     return (
       <PageContainer>
-        <header className="border-b border p-4">
-          <div className="container mx-auto flex justify-between items-center">
-            <Logo />
-            <Button variant="outline" size="sm" onClick={() => navigate("/opportunities")}>
-              Back to Opportunities
-            </Button>
-          </div>
-        </header>
         <MainContent>
           <div className="container mx-auto py-8">
             <H1>Opportunity Not Found</H1>
             <P className="mt-4">The opportunity you're looking for doesn't exist.</P>
+            <Button 
+              variant="outline" 
+              className="mt-4"
+              onClick={() => navigate("/opportunities")}
+            >
+              Back to Opportunities
+            </Button>
           </div>
         </MainContent>
       </PageContainer>
@@ -52,32 +48,6 @@ export function OpportunityDetailPage() {
 
   return (
     <PageContainer>
-      <header className="border-b border p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Logo />
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => navigate("/opportunities")}>
-              Back to Opportunities
-            </Button>
-            {isSignedIn ? (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/home")}
-              >
-                Back to Home
-              </Button>
-            ) : (
-              <SignInButton mode="modal">
-                <Button variant="outline" size="sm">
-                  Sign In
-                </Button>
-              </SignInButton>
-            )}
-          </div>
-        </div>
-      </header>
-
       <MainContent>
         <div className="container mx-auto py-12 px-4">
           <Card className="p-10 bg-gradient-to-br from-background to-accent/5">
@@ -87,6 +57,19 @@ export function OpportunityDetailPage() {
                 <P className="text-xl leading-relaxed whitespace-pre-line text-muted-foreground">
                   {opportunity.description}
                 </P>
+              </div>
+              <div className="mt-8 flex gap-4">
+                <Button 
+                  variant="outline"
+                  onClick={() => navigate("/opportunities")}
+                >
+                  Back to Opportunities
+                </Button>
+                <Button 
+                  onClick={() => navigate("/home")}
+                >
+                  Back to Home
+                </Button>
               </div>
             </div>
           </Card>

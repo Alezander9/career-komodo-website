@@ -65,7 +65,7 @@ export function SpaceBackground({ children, className }: LayoutProps) {
 export function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border p-4">
+      <header className="relative z-50 border-b border p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-8">
             <Logo />
