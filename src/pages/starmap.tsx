@@ -115,10 +115,10 @@ const userProfile =
 
 interface StarMapPageProps {
   opportunities: JobOpportunity[];
+  chatId: Id<"chats"> | undefined;
 }
 
-export function StarMapPage({ opportunities }: StarMapPageProps) {
-  const { chatId } = useParams();
+export function StarMapPage({ opportunities, chatId }: StarMapPageProps) {
   const chat = useQuery(api.queries.getChat, { chatId: chatId as Id<"chats"> });
 
   const opportunitiesBlock = opportunities
