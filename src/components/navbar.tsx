@@ -6,7 +6,11 @@ export function Navbar() {
   const navigate = useNavigate();
 
   const navItems = [
-    { label: "Star Map Opportunities", path: "/opportunities-page" },
+    { label: "Chat with Komodo", path: "/komodo-text" },
+    { label: "Opportunities", path: "/opportunities" },
+    { label: "Star Map", path: "/finalstar" },
+    { label: "Audio Recording", path: "/audio-recording" },
+    { label: "Chats", path: "/chats" },
     { label: "Tutorial", path: "/tutorial" },
     { label: "About Us", path: "/about-us" },
     { label: "FAQ", path: "/faq" },
@@ -14,14 +18,6 @@ export function Navbar() {
 
   return (
     <nav className="flex w-full items-center gap-4">
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => navigate("/komodo-text")}
-        className="text-foreground hover:text-primary"
-      >
-        Komodo Text
-      </Button>
       {navItems.map((item, idx) => (
         <Button
           key={item.path}
