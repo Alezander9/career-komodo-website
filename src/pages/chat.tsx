@@ -1,5 +1,4 @@
 import { PageContainer, MainContent, Card } from "@/components/layout";
-import { H1 } from "@/components/ui/typography";
 import { api } from "@convex/_generated/api";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAction, useMutation, useQuery } from "convex/react";
@@ -9,6 +8,7 @@ import { Id } from "@convex/_generated/dataModel";
 import { useState, useEffect } from "react";
 import { KomodoImage } from "@/components/KomodoImage";
 import Typewriter from "./komodo-text";
+import { motion } from "motion/react";
 
 export function Chat() {
   const [response, setResponse] = useState("");
@@ -130,48 +130,53 @@ export function Chat() {
     <PageContainer>
       <MainContent>
         {chat && (
-          <Card>
-            <div className="text-sm text-gray-500 mb-5">
-              {new Date(chat.createdAt).toLocaleString()}
-            </div>
-            <div className="flex-1 overflow-y-auto mb-4">
-              <ChatMessageList
-                messages={chat.messages
-                  .filter((msg, index) => {
-                    const isLastMessage = index === chat.messages.length - 1;
-                    return !(isLastMessage && msg.sender === "komodo");
-                  })
-                  .map(
-                    (msg: { sender: "user" | "komodo"; message: string }) => ({
-                      content: msg.message,
-                      sender: msg.sender,
-                      timestamp: new Date(chat.createdAt),
-                      userName: msg.sender === "user" ? "You" : "Komodo",
+          <motion.div layoutScroll>
+            <Card>
+              <div className="text-sm text-gray-500 mb-5">
+                {new Date(chat.createdAt).toLocaleString()}
+              </div>
+              <div className="flex-1 overflow-y-auto mb-4">
+                <ChatMessageList
+                  messages={chat.messages
+                    .filter((msg, index) => {
+                      const isLastMessage = index === chat.messages.length - 1;
+                      return !(isLastMessage && msg.sender === "komodo");
                     })
+                    .map(
+                      (msg: {
+                        sender: "user" | "komodo";
+                        message: string;
+                      }) => ({
+                        content: msg.message,
+                        sender: msg.sender,
+                        timestamp: new Date(chat.createdAt),
+                        userName: msg.sender === "user" ? "You" : "Komodo",
+                      })
+                    )}
+                />
+                <motion.div layout className="flex items-center">
+                  <KomodoImage />
+                  {loading && (
+                    <Typewriter text="Komodo is thinking..." speed={20} />
                   )}
-              />
-              <div className="flex items-center">
-                <KomodoImage />
-                {loading && (
-                  <Typewriter text="Komodo is thinking..." speed={20} />
-                )}
-                {response && <Typewriter text={response} speed={5} />}
+                  {response && <Typewriter text={response} speed={5} />}
+                </motion.div>
               </div>
-            </div>
-            <SpeechToText onTranscription={handleTranscription} />
-            {percentComplete >= 80 && (
-              <div className="flex justify-center my-3">
-                <button
-                  className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50 w-full"
-                  onClick={() => {
-                    navigate(`/starmap/${chatId}`);
-                  }}
-                >
-                  See my recommendations!
-                </button>
-              </div>
-            )}
-          </Card>
+              <SpeechToText onTranscription={handleTranscription} />
+              {percentComplete >= 80 && (
+                <div className="flex justify-center my-3">
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50 w-full"
+                    onClick={() => {
+                      navigate(`/starmap/${chatId}`);
+                    }}
+                  >
+                    See my recommendations!
+                  </button>
+                </div>
+              )}
+            </Card>
+          </motion.div>
         )}
       </MainContent>
     </PageContainer>

@@ -1,6 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { P, Small } from "@/components/ui/typography";
+import { motion } from "motion/react";
 
 export interface ChatMessageProps {
   content: string;
@@ -18,7 +19,10 @@ export function ChatMessage({
   const isKomodo = sender === "komodo";
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      layout="position"
       className={cn(
         "flex w-full mb-4",
         isKomodo ? "justify-start" : "justify-end",
@@ -38,7 +42,7 @@ export function ChatMessage({
           {formatTime(timestamp)}
         </Small>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -73,11 +77,15 @@ export function ChatMessageList({
   className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col w-full overflow-y-auto", className)}>
+    <motion.div
+      className={cn("flex flex-col w-full overflow-y-auto", className)}
+    >
       {messages.map((message, index) => (
-        <ChatMessage key={index} {...message} />
+        <motion.div key={index} layout>
+          <ChatMessage {...message} />
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }
 
