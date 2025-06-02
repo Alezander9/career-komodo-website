@@ -1,5 +1,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Navbar } from "@/components/navbar";
+import { Logo } from "@/components/logo";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -56,6 +58,24 @@ export function SpaceBackground({ children, className }: LayoutProps) {
         <div className="absolute inset-0 bg-[url('/stars.svg')] bg-repeat opacity-30"></div>
       </div>
       <div className="relative z-10">{children}</div>
+    </div>
+  );
+}
+
+export function MainLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="relative z-50 border-b border p-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-8">
+            <Logo />
+            <Navbar />
+          </div>
+        </div>
+      </header>
+      <main>
+        {children}
+      </main>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { PageContainer, MainContent, Card } from "@/components/layout";
 import { H1 } from "@/components/ui/typography";
 import { api } from "@convex/_generated/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAction, useMutation, useQuery } from "convex/react";
 import { ChatMessageList } from "@/components/chat-message";
 import { SpeechToText } from "@/components/SpeechToText";
@@ -12,9 +12,10 @@ import Typewriter from "./komodo-text";
 
 export function Chat() {
   const [response, setResponse] = useState("");
+  const [percentComplete, setPercentComplete] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
+  const navigate = useNavigate();
   const { chatId } = useParams();
   const chat = useQuery(api.queries.getChat, { chatId: chatId as Id<"chats"> });
   const addMessage = useMutation(api.mutations.addMessageToChat);
@@ -42,6 +43,14 @@ export function Chat() {
       chat.messages[chat.messages.length - 1].sender === "komodo"
     ) {
       setResponse(chat.messages[chat.messages.length - 1].message);
+      if (
+        chat.messages[chat.messages.length - 1].percentComplete !== undefined
+      ) {
+        setPercentComplete(
+          chat.messages[chat.messages.length - 1].percentComplete ??
+            percentComplete
+        );
+      }
       setLoading(false);
     }
   }, [chat?.messages]);
@@ -58,14 +67,27 @@ export function Chat() {
       content: text,
       storageId: storageId,
       sender: "user",
+      percentComplete: undefined,
     });
 
     const res = await handleSendMessage(text);
 
+    if (!res) {
+      return;
+    }
+
+    const response = res.response;
+    const percentComplete = res.percent_complete;
+    const userInformation = res.user_information;
+    const missingInformation = res.missing_information;
+
+    setPercentComplete(percentComplete);
+
     await addMessage({
       chatId: chatId as Id<"chats">,
-      content: res || "",
+      content: response || "",
       storageId: undefined,
+      percentComplete: percentComplete,
       sender: "komodo",
     });
   };
@@ -109,7 +131,9 @@ export function Chat() {
       <MainContent>
         {chat && (
           <Card>
-            <H1>Chat {new Date(chat.createdAt).toLocaleString()}</H1>
+            <div className="text-sm text-gray-500 mb-5">
+              {new Date(chat.createdAt).toLocaleString()}
+            </div>
             <div className="flex-1 overflow-y-auto mb-4">
               <ChatMessageList
                 messages={chat.messages
@@ -131,10 +155,22 @@ export function Chat() {
                 {loading && (
                   <Typewriter text="Komodo is thinking..." speed={20} />
                 )}
-                {response && <Typewriter text={response} speed={20} />}
+                {response && <Typewriter text={response} speed={5} />}
               </div>
             </div>
             <SpeechToText onTranscription={handleTranscription} />
+            {percentComplete >= 80 && (
+              <div className="flex justify-center my-3">
+                <button
+                  className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50 w-full"
+                  onClick={() => {
+                    navigate(`/starmap/${chatId}`);
+                  }}
+                >
+                  See my recommendations!
+                </button>
+              </div>
+            )}
           </Card>
         )}
       </MainContent>

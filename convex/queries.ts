@@ -60,8 +60,11 @@ export const getChats = query({
 });
 
 export const getChat = query({
-  args: { chatId: v.id("chats") },
+  args: { chatId: v.optional(v.id("chats")) },
   handler: async (ctx, args) => {
+    if (!args.chatId) {
+      return null;
+    }
     const chat = await ctx.db.get(args.chatId);
     return chat;
   },

@@ -1,11 +1,25 @@
+import { api } from "../../convex/_generated/api";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { SignOutButton } from "@clerk/clerk-react";
 import ForceGraph3D from "react-force-graph-3d";
 import * as THREE from "three";
 import { PageContainer, MainContent } from "@/components/layout";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import { useAction, useQuery } from "convex/react";
+import { Id } from "@convex/_generated/dataModel";
+
+export type JobOpportunity = {
+  title: string;
+  company: string;
+  location: string;
+  link: string;
+};
+
+interface StarMapPageProps {
+  opportunities: JobOpportunity[];
+}
 
 interface NodeType {
   id: string;
@@ -38,89 +52,18 @@ interface StarMapJSON {
   nodeTypes: Record<string, string[]>;
 }
 
-const mockAIJSON: StarMapJSON = {
-  "adjacency": {
-    "Bootcamp": ["Internship", "Self-Study"],
-    "Internship": ["Bootcamp", "Junior Developer"],
-    "Self-Study": ["Bootcamp", "Junior Developer"],
-    "Junior Developer": ["Internship", "Self-Study", "Mid Developer"],
-    "Mid Developer": ["Junior Developer", "Senior Developer", "Team Lead"],
-    "Senior Developer": ["Mid Developer", "Tech Lead", "Architect"],
-    "Tech Lead": ["Senior Developer", "Team Lead", "Architect"],
-    "Team Lead": ["Mid Developer", "Tech Lead", "Engineering Manager"],
-    "Architect": ["Senior Developer", "Tech Lead", "CTO"],
-    "Engineering Manager": ["Team Lead", "CTO"],
-    "CTO": ["Architect", "Engineering Manager"]
-  },
-  "starData": {
-    "Bootcamp": {
-      "label": "🚀 Bootcamp",
-      "description": "An intensive launchpad for coding skills and real-world projects.",
-      "links": [{ "text": "Find a Bootcamp", "url": "https://example.com/bootcamp" }]
-    },
-    "Internship": {
-      "label": "🛠️ Internship",
-      "description": "Hands-on experience in a real tech environment, learning from mentors.",
-      "links": [{ "text": "Apply for Internships", "url": "https://example.com/internship" }]
-    },
-    "Self-Study": {
-      "label": "📚 Self-Study",
-      "description": "Learning independently through online resources, books, and personal projects.",
-      "links": [{ "text": "Self-Study Resources", "url": "https://example.com/selfstudy" }]
-    },
-    "Junior Developer": {
-      "label": "👶 Junior Developer",
-      "description": "Building foundational skills and contributing to team projects.",
-      "links": [{ "text": "Junior Dev Guide", "url": "https://example.com/juniordev" }]
-    },
-    "Mid Developer": {
-      "label": "🧑‍💻 Mid Developer",
-      "description": "Taking ownership of features, mentoring juniors, and growing technical depth.",
-      "links": [{ "text": "Level Up", "url": "https://example.com/middev" }]
-    },
-    "Senior Developer": {
-      "label": "🦾 Senior Developer",
-      "description": "Solving complex problems, leading initiatives, and shaping codebase direction.",
-      "links": [{ "text": "Senior Dev Insights", "url": "https://example.com/seniordev" }]
-    },
-    "Tech Lead": {
-      "label": "🧭 Tech Lead",
-      "description": "Guiding technical vision, supporting the team, and ensuring quality delivery.",
-      "links": [{ "text": "Tech Lead Playbook", "url": "https://example.com/techlead" }]
-    },
-    "Team Lead": {
-      "label": "🤝 Team Lead",
-      "description": "Managing people, processes, and fostering a collaborative culture.",
-      "links": [{ "text": "Team Lead Tips", "url": "https://example.com/teamlead" }]
-    },
-    "Architect": {
-      "label": "🏗️ Architect",
-      "description": "Designing scalable systems and making high-level technical decisions.",
-      "links": [{ "text": "Architecture Patterns", "url": "https://example.com/architect" }]
-    },
-    "Engineering Manager": {
-      "label": "📈 Engineering Manager",
-      "description": "Balancing people management with project delivery and team growth.",
-      "links": [{ "text": "Management 101", "url": "https://example.com/engmanager" }]
-    },
-    "CTO": {
-      "label": "🦉 CTO",
-      "description": "Setting technical strategy, building culture, and driving innovation at the highest level.",
-      "links": [{ "text": "CTO Wisdom", "url": "https://example.com/cto" }]
-    }
-  },
-  "nodeTypes": {
-    "start": ["Bootcamp"],
-    "end": ["CTO", "Engineering Manager"]
-  }
-};
-
 function mapToGraphData(adjacency: Record<string, string[]>): GraphData {
-  const nodes = Object.keys(adjacency).map(id => ({ id }));
+  const nodes = Object.keys(adjacency).map((id) => ({ id }));
   const links: LinkType[] = [];
   for (const [source, targets] of Object.entries(adjacency)) {
     for (const target of targets) {
-      if (!links.find(l => (l.source === target && l.target === source) || (l.source === source && l.target === target))) {
+      if (
+        !links.find(
+          (l) =>
+            (l.source === target && l.target === source) ||
+            (l.source === source && l.target === target)
+        )
+      ) {
         links.push({ source, target });
       }
     }
@@ -128,57 +71,154 @@ function mapToGraphData(adjacency: Record<string, string[]>): GraphData {
   return { nodes, links };
 }
 
-export function StarMapPage() {
+// const opportunitiesBlock = `
+// Name: Code in Place
+// Description: Code in Place is a free introductory coding course offered by Stanford University's Computer Science Department, led by Professor Chris Piech and Professor Mehran Sahami. It teaches the fundamentals of computer programming using the Python language, designed to be accessible to individuals of all backgrounds, including those without prior coding experience. The course is primarily delivered online, with a focus on creating a supportive learning community. This won't prepare you for the workforce, but if you've never coded before, it's a good introduction before you jump into bootcamp.
+
+// Name: Codesmith.io
+// Description: Codesmith.io is a software engineering boot camp offering immersive programs, including a full-time remote program and a part-time remote program, designed to help individuals launch or advance their software engineering careers. They focus on teaching full-stack JavaScript and computer science, using modern web technologies like React and Node.js.
+
+// Name: 100 Devs
+// Description: #100Devs is a completely free, 30-week remote software engineering bootcamp led by Leon Noel, designed to help people—especially those with no prior experience—break into tech. The program includes live classes twice a week, Sunday office hours, and over 20 hours of weekly commitment, focusing on hands-on learning through projects, labs, and client work. Last year, 72 participants landed jobs at top companies like Amazon and Twitter, with average salary increases of $53K. Although the bootcamp started in January, new learners can still join via the #catchup-crew on Discord. To participate, fill out the forms, join the Discord server, and follow the setup instructions in the #join-100Devs channel. Leon brings years of experience teaching at places like Harvard and MIT, and his mission is to provide accessible, high-impact coding education as a form of activism—no cost, no catch, just commitment. You can start with the playlist on YouTube. Just search "100devs" on YouTube.
+
+// Name: freeCodeCamp
+// Description: freeCodeCamp is a free, nonprofit coding bootcamp offering over 2,000 hours of self-paced, hands-on training in web development, data structures, APIs, and more. Learners earn certifications in areas like JavaScript, front-end libraries, and data visualization, and can gain real-world experience by contributing to open-source projects for nonprofits. It also provides a large supportive community and extensive free learning resources.
+
+// Name: The Odin Project
+// Description: The Odin Project is a free, open-source coding curriculum designed to teach full-stack web development through a hands-on, project-based approach. It offers two main learning paths: Full Stack JavaScript and Full Stack Ruby on Rails, both starting with a comprehensive Foundations course covering HTML, CSS, JavaScript, Git, and the command line.
+// The curriculum emphasizes self-directed learning by guiding students to consult external resources, encouraging the development of problem-solving and research skills. Learners build real-world projects, such as calculators and to-do apps, to reinforce their understanding and showcase their skills.
+// Supported by an active Discord community, The Odin Project provides a collaborative environment for learners to seek help and share knowledge. Many graduates have successfully transitioned into developer roles, attributing their success to the program's comprehensive and practical approach.
+
+// Name: App Academy
+// Description: App Academy is a top-rated coding bootcamp offering immersive full-time (24 weeks) and part-time (48 weeks) online programs in full-stack software engineering. The curriculum emphasizes hands-on learning with technologies like Python, JavaScript, React, SQL, and Git.
+// A standout feature is its deferred tuition model, allowing students to pay after securing a job. For those preferring self-paced study, App Academy Open provides free access to over 500 hours of the bootcamp curriculum. Additionally, the GenAI for Software Developers course equips learners with AI development skills.
+// Graduates have successfully transitioned into software engineering roles at various tech companies.
+
+// Name: C0d3.com
+// Description: C0D3.com is a free, project-based coding platform that teaches full-stack web development with a focus on JavaScript, Node.js, and industry practices. Students work through real-world coding challenges and receive personalized feedback from a community of mentors and peers. The program is structured to help learners build practical skills that align with professional software engineering standards, making it ideal for self-driven learners who value community interaction and mentorship.
+
+// Name: Full Stack Open
+// Description: Full Stack Open is a free, advanced web development course offered by the University of Helsinki. It covers modern technologies like React, Redux, Node.js, TypeScript, GraphQL, Docker, and CI/CD practices. The course is comprehensive, hands-on, and academically rigorous, aiming at learners who already have basic programming knowledge and want to dive deeper into full-stack JavaScript development. It is recognized for its strong focus on real-world application and professional software engineering practices.
+
+// Name: boot.dev
+// Description: boot.dev is a paid, gamified learning platform focused on back-end development, offering interactive coding lessons in Go, Python, and JavaScript. It emphasizes hands-on experience through small, progressive challenges designed for beginners and intermediate learners aiming to become back-end developers. boot.dev is ideal for those who prefer a structured, step-by-step curriculum without video lectures, and it focuses heavily on building technical skills relevant to real software engineering jobs.
+
+// Name: Udemy
+// Description: Free Udemy Courses with a Library Card are available through partnerships many public libraries have with platforms like Gale Presents: Udemy. With just a library card, users can access thousands of professional-grade courses across topics like coding, business, design, and personal development for free. It's a great resource for self-learners looking to build new skills without the high costs typically associated with online learning platforms.
+
+// Name: LinkedIn Learning
+// Description: Free LinkedIn Learning with a Library Card allows library members to access LinkedIn Learning's full course library covering tech, business, design, and personal development topics. It's completely free. This benefit, available through many public libraries, offers high-quality courses taught by industry experts, and can be a valuable addition for anyone looking to build professional skills or supplement a self-taught curriculum without paying for a subscription.
+// `
+
+const userProfile =
+  "A young man named Ryan who is from Illinois. He likes coding, but doesn't have much experience. He loves komodo dragons. He is extroverted and loves league of legends and JJK.";
+
+interface StarMapPageProps {
+  opportunities: JobOpportunity[];
+  chatId: Id<"chats"> | undefined;
+}
+
+export function StarMapPage({ opportunities, chatId }: StarMapPageProps) {
+  const chat = useQuery(api.queries.getChat, { chatId: chatId as Id<"chats"> });
+
+  const opportunitiesBlock = opportunities
+    .map(
+      (job) =>
+        `Name: ${job.title}\nDescription: ${job.company} - ${job.location}\nLink: ${job.link}\n`
+    )
+    .join("\n");
+
+  const generateStarMap = useAction(api.nodejsactions.generateStarMapResponse);
+  const [mockAIJSON, setMockAIJSON] = useState<StarMapJSON | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [selectedStar, setSelectedStar] = useState<NodeType | null>(null);
-  const [graphData, setGraphData] = useState<GraphData>({ nodes: [], links: [] });
+  const [graphData, setGraphData] = useState<GraphData>({
+    nodes: [],
+    links: [],
+  });
   const [starData, setStarData] = useState<StarData>({});
   const [spinning, setSpinning] = useState(true);
-  const [dimensions, setDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
+  const [dimensions, setDimensions] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
   const navigate = useNavigate();
   const fgRef = useRef<any>(null);
-
-  const startNodes = new Set(mockAIJSON.nodeTypes.start);
-  const endNodes = new Set(mockAIJSON.nodeTypes.end);
-
   const angleRef = useRef(0);
+  const mapAreaRef = useRef<HTMLDivElement>(null);
+
+  const fetchStarMap = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await generateStarMap({
+        conversationHistory:
+          chat?.messages.map((message) => ({
+            sender: message.sender,
+            message: message.message,
+          })) ?? [],
+        opportunitiesBlock,
+      });
+      if (result.success) {
+        setMockAIJSON(result.response);
+        console.log("Fetched StarMap:", result.response);
+      } else {
+        setError(result.error || "An unknown error occurred");
+        console.error("Error fetching StarMap:", result.error);
+      }
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "An unknown error occurred"
+      );
+      console.error("Exception fetching StarMap:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const json = mockAIJSON;
-    setGraphData(mapToGraphData(json.adjacency));
-    setStarData(json.starData);
-  }, []);
+    if (!mockAIJSON) return;
+    setGraphData(mapToGraphData(mockAIJSON.adjacency));
+    setStarData(mockAIJSON.starData);
+  }, [mockAIJSON]);
 
-  // Responsive: update dimensions on window resize
+  useEffect(() => {
+    if (chat && !mockAIJSON) {
+      fetchStarMap();
+    }
+  }, [chat]);
+
   useEffect(() => {
     const handleResize = () => {
-      // Adjust header height if different in your app!
       const headerHeight = 72;
-      setDimensions({ width: window.innerWidth, height: window.innerHeight - headerHeight });
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight - headerHeight,
+      });
     };
     window.addEventListener("resize", handleResize);
     handleResize();
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Spinning camera logic: keep spinning as long as spinning is true
   const handleEngineTick = useCallback(() => {
     if (!fgRef.current || !spinning) return;
-    angleRef.current += 0.002; // keep incrementing forever
+    angleRef.current += 0.002;
     const distance = 120;
     const angle = angleRef.current;
-
     fgRef.current.cameraPosition(
       {
         x: distance * Math.sin(angle),
         y: distance * 0.1 + 10 * Math.sin(angle * 0.7),
-        z: distance * Math.cos(angle)
+        z: distance * Math.cos(angle),
       },
       { x: 0, y: 0, z: 0 },
       0
     );
   }, [spinning]);
 
-  // When spinning stops, reset camera to default position smoothly
   useEffect(() => {
     if (!spinning && fgRef.current) {
       fgRef.current.cameraPosition(
@@ -189,8 +229,6 @@ export function StarMapPage() {
     }
   }, [spinning]);
 
-  // Stop spinning on any click in the map area (except popup)
-  const mapAreaRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!spinning) return;
     const handleClick = (e: MouseEvent) => {
@@ -207,30 +245,109 @@ export function StarMapPage() {
     return () => window.removeEventListener("mousedown", handleClick);
   }, [spinning]);
 
-  return (
-    <div style={{ height: "100vh", width: "100vw", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-      <header className="border-b border p-4" style={{ flexShrink: 0 }}>
-        <div className="container mx-auto flex justify-between items-center">
-          <Logo />
-          <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm"
-            onClick={() => navigate("/komodo-text")}>
-              Komodo Text
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/home")}
-            >
-              Back to Home
-            </Button>
-            <SignOutButton>
-              <Button variant="outline" size="sm">Sign Out</Button>
-            </SignOutButton>
-          </div>
+  // Render the map or loading state
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full bg-black text-white">
+          <div className="text-2xl mb-4">Generating Your StarMap...</div>
+          <div className="text-lg">This may take a minute...</div>
         </div>
-      </header>
+      );
+    }
 
+    if (error) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full bg-black text-white">
+          <div className="text-2xl mb-4">Error Generating StarMap</div>
+          <div className="text-lg mb-6">{error}</div>
+          <Button onClick={fetchStarMap}>Try Again</Button>
+        </div>
+      );
+    }
+
+    if (!mockAIJSON) {
+      return (
+        <div className="flex flex-col items-center justify-center h-full bg-black text-white">
+          <div className="text-3xl mb-6">Ready to Explore Career Paths?</div>
+          <div className="text-xl mb-10 max-w-xl text-center">
+            Click the button below to generate a personalized star map of career
+            opportunities based on your profile.
+          </div>
+          <Button
+            size="lg"
+            onClick={fetchStarMap}
+            className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 text-xl"
+          >
+            Generate StarMap
+          </Button>
+        </div>
+      );
+    }
+
+    const startNodes = new Set(mockAIJSON.nodeTypes.start);
+    const endNodes = new Set(mockAIJSON.nodeTypes.end);
+
+    return (
+      <ForceGraph3D
+        ref={fgRef}
+        width={dimensions.width}
+        height={dimensions.height}
+        graphData={graphData}
+        backgroundColor="#000"
+        nodeColor={(node) => {
+          if (startNodes.has(node.id)) return "green";
+          if (endNodes.has(node.id)) return "red";
+          return "#fff";
+        }}
+        linkColor={() => "#88ccff"}
+        nodeThreeObject={(node: NodeType) => {
+          const group = new THREE.Group();
+
+          let color = 0xffffff;
+          if (startNodes.has(node.id))
+            color = 0x51d6ff; // green
+          else if (endNodes.has(node.id)) color = 0xffd60a; // red
+
+          const geometry = new THREE.SphereGeometry(4, 16, 16);
+          const material = new THREE.MeshBasicMaterial({
+            color,
+            transparent: true,
+            opacity: 0.95,
+          });
+          const sphere = new THREE.Mesh(geometry, material);
+
+          const glowMaterial = new THREE.MeshBasicMaterial({
+            color: 0x88ccff,
+            transparent: true,
+            opacity: 0.25,
+          });
+          const glow = new THREE.Mesh(
+            new THREE.SphereGeometry(8, 16, 16),
+            glowMaterial
+          );
+
+          group.add(glow);
+          group.add(sphere);
+          return group;
+        }}
+        onNodeClick={setSelectedStar}
+        enableNodeDrag={false}
+        onEngineTick={handleEngineTick}
+      />
+    );
+  };
+
+  return (
+    <div
+      style={{
+        height: "100vh",
+        width: "100vw",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
       <div
         ref={mapAreaRef}
         style={{
@@ -239,54 +356,13 @@ export function StarMapPage() {
           position: "relative",
           width: "100vw",
           background: "#000",
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
-        <ForceGraph3D
-          ref={fgRef}
-          width={dimensions.width}
-          height={dimensions.height}
-          graphData={graphData}
-          backgroundColor="#000"
-          nodeColor={node => {
-            if (startNodes.has(node.id)) return "green";
-            if (endNodes.has(node.id)) return "red";
-            return "#fff";
-          }}
-          linkColor={() => "#88ccff"}
-          nodeThreeObject={(node: NodeType) => {
-            const group = new THREE.Group();
+        {renderContent()}
 
-            let color = 0xffffff;
-            if (startNodes.has(node.id)) color = 0x51d6ff; // green
-            else if (endNodes.has(node.id)) color = 0xffd60a; // red
-
-            const geometry = new THREE.SphereGeometry(4, 16, 16);
-            const material = new THREE.MeshBasicMaterial({
-              color,
-              transparent: true,
-              opacity: 0.95
-            });
-            const sphere = new THREE.Mesh(geometry, material);
-
-            const glowMaterial = new THREE.MeshBasicMaterial({
-              color: 0x88ccff,
-              transparent: true,
-              opacity: 0.25
-            });
-            const glow = new THREE.Mesh(new THREE.SphereGeometry(8, 16, 16), glowMaterial);
-
-            group.add(glow);
-            group.add(sphere);
-            return group;
-          }}
-          onNodeClick={setSelectedStar}
-          enableNodeDrag={false}
-          onEngineTick={handleEngineTick}
-        />
-
-        {/* Overlay text for vibes */}
-        {spinning && (
+        {/* Show overlay text only when the map is loaded and spinning */}
+        {spinning && mockAIJSON && (
           <div
             style={{
               position: "absolute",
@@ -300,7 +376,7 @@ export function StarMapPage() {
               userSelect: "none",
               zIndex: 20,
               fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-              whiteSpace: "nowrap"
+              whiteSpace: "nowrap",
             }}
           >
             ✨ Spinning for vibes... ✨
@@ -322,14 +398,17 @@ export function StarMapPage() {
               borderRadius: 8,
               padding: 16,
               zIndex: 30,
-              minWidth: 240
+              minWidth: 240,
             }}
           >
             <div>
               <h2 style={{ fontSize: "1.2rem", marginBottom: 4 }}>
                 {starData[selectedStar!.id]?.label ?? `⭐ ${selectedStar!.id}`}
               </h2>
-              <p style={{ fontSize: "0.9rem" }}>{starData[selectedStar!.id]?.description ?? "No description available."}</p>
+              <p style={{ fontSize: "0.9rem" }}>
+                {starData[selectedStar!.id]?.description ??
+                  "No description available."}
+              </p>
               {starData[selectedStar!.id]?.links && (
                 <ul style={{ marginTop: 8 }}>
                   {starData[selectedStar!.id]!.links!.map((link, i) => (
@@ -354,7 +433,7 @@ export function StarMapPage() {
                 color: "#fff",
                 border: "none",
                 borderRadius: 4,
-                padding: "4px 12px"
+                padding: "4px 12px",
               }}
               onClick={() => setSelectedStar(null)}
             >
