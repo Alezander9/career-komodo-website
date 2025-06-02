@@ -9,6 +9,7 @@ import { useState, useEffect } from "react";
 import { KomodoImage } from "@/components/KomodoImage";
 import Typewriter from "./komodo-text";
 import { motion } from "motion/react";
+import { Sparkles } from "lucide-react";
 
 export function Chat() {
   const [response, setResponse] = useState("");
@@ -164,15 +165,27 @@ export function Chat() {
               </div>
               <SpeechToText onTranscription={handleTranscription} />
               {percentComplete >= 80 && (
-                <div className="flex justify-center my-3">
-                  <button
-                    className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50 w-full"
+                <div className="flex justify-center mt-10">
+                  <motion.button
+                    initial={{
+                      scale: 1,
+                      boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
+                      border: "2px solid rgb(255, 255, 255, 0.5)",
+                    }}
+                    whileHover={{
+                      scale: 1.05,
+                      boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
+                      border: "2px solid rgb(255, 255, 255, 0.7)",
+                    }}
+                    whileTap={{ scale: 0.95 }}
+                    className="border-white/50 hover:border-white/70 border-2 shadow-md shadow-white/30 text-white py-2 px-7 rounded-full disabled:opacity-50 flex items-center justify-center gap-2"
                     onClick={() => {
                       navigate(`/starmap/${chatId}`);
                     }}
                   >
-                    See my recommendations!
-                  </button>
+                    See recommendations!
+                    <Sparkles className="w-4 h-4" />
+                  </motion.button>
                 </div>
               )}
             </Card>

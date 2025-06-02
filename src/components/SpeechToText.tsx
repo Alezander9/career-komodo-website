@@ -70,12 +70,48 @@ export function SpeechToText({
 
   return (
     <motion.div
-      layout
+      layout="position"
       className="flex flex-row gap-4 items-center justify-center"
     >
       <motion.button
         layout="position"
-        className={`border-2 shadow-lg text-white p-5 rounded-full disabled:border-gray-300/50 flex items-center justify-center w-min ${
+        initial={{
+          scale: 1,
+          boxShadow: `0 10px 15px -3px ${
+            status === "recording"
+              ? "rgb(43, 127, 255, 0.5)"
+              : "rgb(255, 255, 255, 0.5)"
+          }`,
+          border: `2px solid ${
+            status === "recording"
+              ? "rgb(43, 127, 255, 0.5)"
+              : "rgb(255, 255, 255, 0.5)"
+          }`,
+        }}
+        whileHover={
+          loading
+            ? {}
+            : {
+                scale: 1.05,
+                boxShadow: `0 10px 15px -3px ${
+                  status === "recording"
+                    ? "rgb(43, 127, 255, 0.5)"
+                    : "rgb(255, 255, 255, 0.5)"
+                }`,
+                border: `2px solid ${
+                  status === "recording"
+                    ? "rgb(43, 127, 255, 0.7)"
+                    : "rgb(255, 255, 255, 0.7)"
+                }`,
+              }
+        }
+        transition={{
+          type: "spring",
+          stiffness: 300,
+          damping: 30,
+        }}
+        whileTap={{ scale: 0.95 }}
+        className={`border-2 shadow-md text-white p-5 rounded-full disabled:border-gray-300/50 flex items-center justify-center w-min ${
           status === "recording"
             ? "shadow-blue-500/50 border-blue-500/50"
             : "shadow-white/50 border-white/50"
