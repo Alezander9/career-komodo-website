@@ -3,7 +3,7 @@ import { useAction, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
 import { useEffect, useState } from "react";
 import { Id } from "@convex/_generated/dataModel";
-import { Visualizer } from "react-sound-visualizer";
+import { AudioVisualizer } from "./AudioVisualizer";
 
 export function SpeechToText({
   onTranscription,
@@ -27,6 +27,7 @@ export function SpeechToText({
   });
   const transcribeAudio = useAction(api.actions.audioToText);
   const generateUploadUrl = useMutation(api.mutations.generateUploadUrl);
+  const [loading, setLoading] = useState(false);
 
   const handleTranscription = async (mediaBlobUrl: string) => {
     console.log("Starting transcription...");
@@ -68,15 +69,7 @@ export function SpeechToText({
   return (
     <div className="flex flex-col gap-4">
       {previewAudioStream && (
-        <Visualizer
-          audio={previewAudioStream}
-          strokeColor="#FFF"
-          mode="current"
-        >
-          {({ canvasRef }) => (
-            <canvas ref={canvasRef} width={500} height={100} />
-          )}
-        </Visualizer>
+        <AudioVisualizer audioStream={previewAudioStream} />
       )}
       {status !== "recording" && (
         <button
