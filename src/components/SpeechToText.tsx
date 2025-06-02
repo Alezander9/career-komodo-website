@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Id } from "@convex/_generated/dataModel";
 import { AudioVisualizer } from "./AudioVisualizer";
 import { Mic } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 
 export function SpeechToText({
   onTranscription,
@@ -68,12 +69,13 @@ export function SpeechToText({
   }, [previewAudioStream]);
 
   return (
-    <div className="flex flex-col gap-4 items-center">
-      {previewAudioStream && (
-        <AudioVisualizer audioStream={previewAudioStream} />
-      )}
-      <button
-        className={`border-2  shadow-lg text-white p-5 rounded-full disabled:border-gray-300/50 flex items-center justify-center w-min ${
+    <motion.div
+      layout
+      className="flex flex-row gap-4 items-center justify-center"
+    >
+      <motion.button
+        layout="position"
+        className={`border-2 shadow-lg text-white p-5 rounded-full disabled:border-gray-300/50 flex items-center justify-center w-min ${
           status === "recording"
             ? "shadow-blue-500/50 border-blue-500/50"
             : "shadow-white/50 border-white/50"
@@ -88,9 +90,16 @@ export function SpeechToText({
         disabled={loading}
       >
         <Mic
-          className={`w-10 h-10  ${loading ? "text-gray-300 animate-pulse" : "text-white"}`}
+          className={`w-10 h-10 ${
+            loading ? "text-gray-300 animate-pulse" : "text-white"
+          }`}
         />
-      </button>
-    </div>
+      </motion.button>
+      {previewAudioStream && status === "recording" && (
+        <motion.div layout="position">
+          <AudioVisualizer audioStream={previewAudioStream} />
+        </motion.div>
+      )}
+    </motion.div>
   );
 }
