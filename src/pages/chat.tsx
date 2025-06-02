@@ -111,8 +111,6 @@ export function Chat() {
       });
     }
 
-    return; // TODO: remove this
-
     try {
       const result = await generateResponse({ messages });
       if (!result.success) {
