@@ -64,13 +64,18 @@ export function AudioVisualizer({ audioStream }: { audioStream: MediaStream }) {
     const sliceWidth = (width * 1.0) / dataArray.length;
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "#FFF";
+    ctx.strokeStyle = "rgba(255, 255, 255)";
     ctx.clearRect(0, 0, width, height);
     ctx.beginPath();
     ctx.moveTo(0, height / 2);
 
-    for (const item of dataArray) {
-      const y = (item / 128.0) * height - height / 2;
+    console.log(dataArray);
+
+    for (let i = 0; i < dataArray.length; i++) {
+      const item = dataArray[i] - 128.0;
+      const scale =
+        1.0 - Math.abs(i - dataArray.length / 2) / (dataArray.length / 2);
+      const y = (item / 255.0) * height * scale + height / 2;
       ctx.lineTo(x, y);
       x += sliceWidth;
     }
@@ -79,5 +84,5 @@ export function AudioVisualizer({ audioStream }: { audioStream: MediaStream }) {
     ctx.stroke();
   }
 
-  return <canvas width={500} height={100} ref={canvasRef} />;
+  return <canvas width={300} height={100} ref={canvasRef} />;
 }

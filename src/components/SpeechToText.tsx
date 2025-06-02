@@ -4,6 +4,7 @@ import { api } from "@convex/_generated/api";
 import { useEffect, useState } from "react";
 import { Id } from "@convex/_generated/dataModel";
 import { AudioVisualizer } from "./AudioVisualizer";
+import { Mic } from "lucide-react";
 
 export function SpeechToText({
   onTranscription,
@@ -67,30 +68,29 @@ export function SpeechToText({
   }, [previewAudioStream]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 items-center">
       {previewAudioStream && (
         <AudioVisualizer audioStream={previewAudioStream} />
       )}
-      {status !== "recording" && (
-        <button
-          className="bg-blue-500 text-white p-2 rounded-md disabled:opacity-50"
-          onClick={startRecording}
-          disabled={status === "recording" || loading}
-        >
-          {loading ? "Loading..." : "Start Recording"}
-        </button>
-      )}
-      {status === "recording" && (
-        <button
-          className="bg-red-500 text-white p-2 rounded-md disabled:opacity-50"
-          onClick={() => {
+      <button
+        className={`border-2  shadow-lg text-white p-5 rounded-full disabled:border-gray-300/50 flex items-center justify-center w-min ${
+          status === "recording"
+            ? "shadow-blue-500/50 border-blue-500/50"
+            : "shadow-white/50 border-white/50"
+        }`}
+        onClick={() => {
+          if (status === "recording") {
             stopRecording();
-          }}
-          disabled={status !== "recording"}
-        >
-          Stop Recording
-        </button>
-      )}
+          } else {
+            startRecording();
+          }
+        }}
+        disabled={loading}
+      >
+        <Mic
+          className={`w-10 h-10  ${loading ? "text-gray-300 animate-pulse" : "text-white"}`}
+        />
+      </button>
     </div>
   );
 }
