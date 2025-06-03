@@ -52,7 +52,7 @@ export function MariemLandingPage() {
                   <SignInButton mode="modal">
                     <Button size="lg">Get Started</Button>
                   </SignInButton>
-                  <Button size="lg" variant="outline" onClick={() => navigate("/about-us")}>
+                  <Button size="lg" variant="outline" onClick={() => navigate("/tutorial")}>
                     Learn More
                   </Button>
                 </>
