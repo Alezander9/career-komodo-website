@@ -100,6 +100,10 @@ const router = createBrowserRouter([
     path: "/",
     element: createPublicRoute(MariemLandingPage),
   },
+  {
+    path: "/faq",
+    element: createPublicRoute(FAQPage),
+  },
 
   // Protected main routes
   {
