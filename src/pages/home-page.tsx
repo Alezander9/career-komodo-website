@@ -3,7 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
-import { PageContainer, MainContent, SpaceBackground } from "@/components/layout";
+import {
+  PageContainer,
+  MainContent,
+  SpaceBackground,
+} from "@/components/layout";
 import { Logo } from "@/components/logo";
 import { H1, Lead } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
@@ -35,20 +39,23 @@ export function HomePage() {
       <MainContent>
         <SpaceBackground>
           <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 text-center">
-            <div className="animate-float mb-6">
-              <Logo size="lg" />
-            </div>
-
             <H1 className="mb-4">Welcome to Career Komodo</H1>
 
             <Lead className="max-w-2xl mb-8">
-              Explore career paths and alternatives to four-year college education
-              with our AI-powered guide.
+              Explore career paths and alternatives to four-year college
+              education with our AI-powered guide.
             </Lead>
 
-            <div className="relative z-50">
-              <Button 
-                size="lg" 
+            <div className="relative z-50 flex flex-col gap-4">
+              <Button
+                size="lg"
+                className="animate-pulse-slow"
+                onClick={() => navigate("/chats")}
+              >
+                Chat
+              </Button>
+              <Button
+                size="lg"
                 className="animate-pulse-slow"
                 onClick={() => navigate("/opportunities")}
               >
