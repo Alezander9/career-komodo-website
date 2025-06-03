@@ -67,10 +67,18 @@ function createProtectedRoute(Component: ComponentType, withLayout = true): Rout
   return <ProtectedRoute>{element}</ProtectedRoute>;
 }
 
-function createPublicRoute(Component: ComponentType): RouteObject["element"] {
+function createPublicRoute(Component: ComponentType, withLayout = false): RouteObject["element"] {
+  const element = withLayout ? (
+    <MainLayout>
+      <Component />
+    </MainLayout>
+  ) : (
+    <Component />
+  );
+
   return (
     <PublicRoute>
-      <Component />
+      {element}
     </PublicRoute>
   );
 }
@@ -96,7 +104,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/faq",
-    element: createPublicRoute(FAQPage),
+    element: createPublicRoute(FAQPage, true),
   },
 
   // Protected main routes
@@ -139,9 +147,12 @@ const router = createBrowserRouter([
   ...featureRoutes.map((route): RouteObject => {
     // Make certain routes public
     const isPublicRoute = ["/opportunities", "/faq", "/about-us"].includes(route.path);
+    const shouldIncludeLayout = ["/faq", "/about-us", "/opportunities"].includes(route.path);
     return {
       path: route.path,
-      element: isPublicRoute ? createPublicRoute(route.component) : createProtectedRoute(route.component),
+      element: isPublicRoute 
+        ? createPublicRoute(route.component, shouldIncludeLayout) 
+        : createProtectedRoute(route.component),
     };
   }),
 ]);
