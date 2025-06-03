@@ -140,20 +140,20 @@ export function MariemLandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-[hsl(var(--accent))]">
+        <section className="py-20 bg-muted">
           <div className="container mx-auto px-4 text-center">
             <H2 className="mb-6">Ready to Transform Your Career?</H2>
             <P className="mb-8">Join other professionals who have found their path with CareerKomodo</P>
             {!isSignedIn ? (
               <SignInButton mode="modal">
-                <Button size="lg" variant="outline" className="bg-transparent border-white hover:bg-white/10">
+                <Button size="lg" variant="outline" className="bg-transparent hover:bg-background/10">
                   Start Your Journey
                 </Button>
               </SignInButton>
             ) : (
               <div className="flex flex-col items-center gap-2">
                 <svg
-                  className="w-8 h-8 text-white animate-pulse"
+                  className="w-8 h-8 text-foreground animate-pulse"
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +171,7 @@ export function MariemLandingPage() {
                   size="lg" 
                   variant="outline" 
                   onClick={() => navigate("/komodo-text")}
-                  className="bg-transparent border-white hover:bg-white/10 animate-pulse-slow"
+                  className="bg-transparent hover:bg-background/10 animate-pulse-slow"
                 >
                   Chat with Komodo
                 </Button>
