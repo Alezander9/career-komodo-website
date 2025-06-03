@@ -51,10 +51,6 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
     return <LoadingScreen />;
   }
 
-  if (isAuthenticated) {
-    return <Navigate to="/home" replace />;
-  }
-
   return <>{children}</>;
 }
 
@@ -87,9 +83,7 @@ const featureRoutes: FeatureRoute[] = [
   { path: "/chats", name: "Chats", component: AllChatsPage },
   { path: "/opportunities", name: "Opportunities", component: OpportunitiesPage },
   { path: "/about-us", name: "About Us", component: AboutUsPage },
-  // { path: "/tutorial", name: "Tutorial", component: TutorialPage },
   { path: "/faq", name: "FAQ", component: FAQPage },
-  // { path: "/scraping", name: "Scraper", component: CuteScrapingPage },
   { path: "/finalstar", name: "Final Star Map", component: CombinedStarMapPage },
 ];
 
@@ -107,6 +101,16 @@ const router = createBrowserRouter([
     element: createProtectedRoute(HomePage),
   },
 
+  // Public informational routes
+  {
+    path: "/komodo-text",
+    element: createPublicRoute(AllChatsPage),
+  },
+  {
+    path: "/opportunities/:opportunityId",
+    element: createPublicRoute(OpportunityDetailPage),
+  },
+
   // Protected dynamic routes
   {
     path: "/chat/:chatId",
@@ -115,10 +119,6 @@ const router = createBrowserRouter([
   {
     path: "/starmap/:chatId",
     element: createProtectedRoute(CombinedStarMapPage),
-  },
-  {
-    path: "/opportunities/:opportunityId",
-    element: createProtectedRoute(OpportunityDetailPage, false),
   },
 
   // Special routes (mixed protection)
@@ -132,10 +132,14 @@ const router = createBrowserRouter([
   },
 
   // Feature routes (generated from configuration)
-  ...featureRoutes.map((route): RouteObject => ({
-    path: route.path,
-    element: createProtectedRoute(route.component),
-  })),
+  ...featureRoutes.map((route): RouteObject => {
+    // Make certain routes public
+    const isPublicRoute = ["/opportunities", "/faq", "/about-us"].includes(route.path);
+    return {
+      path: route.path,
+      element: isPublicRoute ? createPublicRoute(route.component) : createProtectedRoute(route.component),
+    };
+  }),
 ]);
 
 export function Router() {
