@@ -3,6 +3,8 @@ import { useAction } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { StarMapPage } from "./starmap";
 import { StarBackground } from "../components/StarBackground";
+import { useParams } from "react-router-dom";
+import { Id } from "@convex/_generated/dataModel";
 
 export type JobOpportunity = {
   title: string;
@@ -16,78 +18,81 @@ const defaultOpportunities: JobOpportunity[] = [
     title: "Code in Place",
     company: "Stanford University (Prof. Chris Piech & Prof. Mehran Sahami)",
     location: "Online",
-    link: "https://codeinplace.stanford.edu/"
+    link: "https://codeinplace.stanford.edu/",
   },
   {
     title: "Codesmith.io",
     company: "Codesmith.io",
     location: "Remote",
-    link: "https://codesmith.io/"
+    link: "https://codesmith.io/",
   },
   {
     title: "100 Devs",
     company: "#100Devs (Leon Noel)",
     location: "Remote",
-    link: "https://leonnoel.com/100devs/"
+    link: "https://leonnoel.com/100devs/",
   },
   {
     title: "freeCodeCamp",
     company: "freeCodeCamp.org",
     location: "Online",
-    link: "https://www.freecodecamp.org/"
+    link: "https://www.freecodecamp.org/",
   },
   {
     title: "The Odin Project",
     company: "The Odin Project",
     location: "Online",
-    link: "https://www.theodinproject.com/"
+    link: "https://www.theodinproject.com/",
   },
   {
     title: "App Academy",
     company: "App Academy",
     location: "Remote",
-    link: "https://www.appacademy.io/"
+    link: "https://www.appacademy.io/",
   },
   {
     title: "C0d3.com",
     company: "C0D3.com",
     location: "Online",
-    link: "https://www.c0d3.com/"
+    link: "https://www.c0d3.com/",
   },
   {
     title: "Full Stack Open",
     company: "University of Helsinki",
     location: "Online",
-    link: "https://fullstackopen.com/"
+    link: "https://fullstackopen.com/",
   },
   {
     title: "boot.dev",
     company: "boot.dev",
     location: "Online",
-    link: "https://boot.dev/"
+    link: "https://boot.dev/",
   },
   {
     title: "Udemy (via Library Card)",
     company: "Udemy / Gale Presents: Udemy",
     location: "Online (via Public Library)",
-    link: "https://www.gale.com/udemy"
+    link: "https://www.gale.com/udemy",
   },
   {
     title: "LinkedIn Learning (via Library Card)",
     company: "LinkedIn Learning",
     location: "Online (via Public Library)",
-    link: "https://www.linkedin.com/learning-login/go/library-card"
-  }
+    link: "https://www.linkedin.com/learning-login/go/library-card",
+  },
 ];
 
 export function CombinedStarMapPage() {
   const scrapeLinkedInJobs = useAction(api.nodejsactions.scrapeLinkedInJobs);
+  const { chatId } = useParams();
 
   const keywords = ["Python", "JavaScript", "TypeScript"];
   const location = "Chicago, Illinois, United States";
 
   const [step, setStep] = useState<"choose" | "scraping" | "show">("choose");
-  const [opportunities, setOpportunities] = useState<JobOpportunity[] | null>(null);
+  const [opportunities, setOpportunities] = useState<JobOpportunity[] | null>(
+    null
+  );
   const [error, setError] = useState<string | null>(null);
 
   const handleScrape = async () => {
@@ -95,7 +100,10 @@ export function CombinedStarMapPage() {
     setError(null);
     setOpportunities(null);
     try {
-      const jobs = await scrapeLinkedInJobs({ keywords, location }) as JobOpportunity[];
+      const jobs = (await scrapeLinkedInJobs({
+        keywords,
+        location,
+      })) as JobOpportunity[];
       setOpportunities(jobs);
       setStep("show");
     } catch (err) {
@@ -110,7 +118,14 @@ export function CombinedStarMapPage() {
   };
 
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh", overflow: "hidden" }}>
+    <div
+      style={{
+        position: "relative",
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+      }}
+    >
       <StarBackground />
       <div
         style={{
@@ -150,14 +165,16 @@ export function CombinedStarMapPage() {
                 textShadow: "0 2px 10px #000",
               }}
             >
-              Would you like to scrape fresh job opportunities from LinkedIn, or continue with our preset learning and career paths?
+              Would you like to scrape fresh job opportunities from LinkedIn, or
+              continue with our preset learning and career paths?
             </p>
             <div style={{ display: "flex", gap: 24, marginBottom: 12 }}>
               <button
                 onClick={handleScrape}
                 style={{
                   padding: "14px 32px",
-                  background: "linear-gradient(90deg,rgb(67, 58, 237) 60%, #ffe066 100%)",
+                  background:
+                    "linear-gradient(90deg,rgb(67, 58, 237) 60%, #ffe066 100%)",
                   color: "#fff",
                   border: "none",
                   borderRadius: 12,
@@ -175,7 +192,8 @@ export function CombinedStarMapPage() {
                 onClick={handleUsePreset}
                 style={{
                   padding: "14px 32px",
-                  background: "linear-gradient(90deg, #a78bfa 60%,rgb(58, 73, 237) 100%)",
+                  background:
+                    "linear-gradient(90deg, #a78bfa 60%,rgb(58, 73, 237) 100%)",
                   color: "#fff",
                   border: "none",
                   borderRadius: 12,
@@ -190,7 +208,11 @@ export function CombinedStarMapPage() {
                 Continue with Preset
               </button>
             </div>
-            {error && <div style={{ color: "#ffe066", marginTop: 18, fontWeight: 600 }}>{error}</div>}
+            {error && (
+              <div style={{ color: "#ffe066", marginTop: 18, fontWeight: 600 }}>
+                {error}
+              </div>
+            )}
           </>
         )}
 
@@ -208,21 +230,23 @@ export function CombinedStarMapPage() {
             >
               Scraping LinkedIn Jobs...
             </h1>
-            <div style={{ marginBottom: 16, color: "#ffe066", fontWeight: 500 }}>
+            <div
+              style={{ marginBottom: 16, color: "#ffe066", fontWeight: 500 }}
+            >
               <span>Keywords:</span> {keywords.join(", ")}
             </div>
             <div style={{ color: "#ffe066", fontWeight: 500 }}>
               <span>Location:</span> {location}
             </div>
-            <div style={{ display: 'flex', gap: 14, marginTop: 36 }}>
+            <div style={{ display: "flex", gap: 14, marginTop: 36 }}>
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
                   style={{
                     width: 22,
                     height: 22,
-                    borderRadius: '50%',
-                    background: '#ffe066',
+                    borderRadius: "50%",
+                    background: "#ffe066",
                     opacity: 0.85,
                     animation: `starmap-bounce 1.2s infinite cubic-bezier(.36,.07,.19,.97) both`,
                     animationDelay: `${i * 0.18}s`,
@@ -234,8 +258,19 @@ export function CombinedStarMapPage() {
         )}
 
         {step === "show" && (
-          <div style={{ width: "100vw", height: "100vh", position: "fixed", left: 0, top: 0 }}>
-            <StarMapPage opportunities={opportunities ?? defaultOpportunities} />
+          <div
+            style={{
+              width: "100vw",
+              height: "100vh",
+              position: "fixed",
+              left: 0,
+              top: 0,
+            }}
+          >
+            <StarMapPage
+              opportunities={opportunities ?? defaultOpportunities}
+              chatId={chatId as Id<"chats">}
+            />
           </div>
         )}
       </div>
