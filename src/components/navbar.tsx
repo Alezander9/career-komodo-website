@@ -10,7 +10,7 @@ export function Navbar() {
     { label: "Chat", path: "/chats" },
     // { label: "Chat with Komodo", path: "/komodo-text" },
     { label: "Opportunities", path: "/opportunities" },
-    { label: "Star Map", path: "/finalstar" },
+    // { label: "Star Map", path: "/finalstar" },
     // { label: "Audio Recording", path: "/audio-recording" },
     // { label: "Tutorial", path: "/tutorial" },
     // { label: "About Us", path: "/about-us" },

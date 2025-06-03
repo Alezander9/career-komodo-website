@@ -16,8 +16,16 @@ export function MariemLandingPage() {
           <Logo />
           <div className="flex items-center gap-4">
             <Button variant="outline" size="sm"
-            onClick={() => navigate("/komodo-text")}>
-              Komodo Text
+            onClick={() => navigate("/opportunities")}>
+              Opportunities
+            </Button>
+            <Button variant="outline" size="sm"
+            onClick={() => navigate("/about-us")}>
+              About Us
+            </Button>
+            <Button variant="outline" size="sm"
+            onClick={() => navigate("/faq")}>
+              FAQ
             </Button>
             {isSignedIn ? (
               <Button
