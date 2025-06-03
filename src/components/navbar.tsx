@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@clerk/clerk-react";
+import { Logo } from "@/components/logo";
 
 export function Navbar() {
   const navigate = useNavigate();
@@ -17,18 +18,26 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="flex w-full items-center gap-4">
-      {navItems.map((item, idx) => (
-        <Button
-          key={item.path}
-          variant="outline"
-          size="sm"
-          onClick={() => navigate(item.path)}
-          className="text-foreground hover:text-primary"
-        >
-          {item.label}
-        </Button>
-      ))}
+    <nav className="flex w-full items-center justify-between">
+      {/* Left side: Logo and navigation items */}
+      <div className="flex items-center gap-6">
+        <Logo size="lg" />
+        <div className="flex items-center gap-4">
+          {navItems.map((item, idx) => (
+            <Button
+              key={item.path}
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(item.path)}
+              className="text-foreground hover:text-primary"
+            >
+              {item.label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {/* Right side: Sign out button */}
       <SignOutButton>
         <Button variant="outline" size="sm" className="text-foreground hover:text-primary">
           Sign Out
