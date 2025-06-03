@@ -40,7 +40,7 @@ export function TutorialPage() {
             </header>
 
             <MainContent>
-                <div className="max-w-4xl mx-auto">
+                <div id="faq" className="max-w-4xl mx-auto">
                     <H1 className="text-center mb-12">Frequently Asked Questions</H1>
                     
                     <div className="space-y-8">

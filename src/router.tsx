@@ -28,7 +28,6 @@ const featureRoutes = [
   { path: "/opportunities-page", name: "Opportunities", component: OpportunitiesPage },
   { path: "/about-us", name: "About Us", component: AboutUsPage },
   { path: "/tutorial", name: "Tutorial", component: TutorialPage },
-  { path: "/old-home", name: "Old Home", component: HomePage },
 ];
 
 // Protected route component
@@ -75,7 +74,7 @@ const router = createBrowserRouter([
     path: "/home",
     element: (
       <ProtectedRoute>
-        <MariemLandingPage />
+        <HomePage featureRoutes={featureRoutes} />
       </ProtectedRoute>
     ),
   },
@@ -97,7 +96,11 @@ const router = createBrowserRouter([
   },
   ...featureRoutes.map((route) => ({
     path: route.path,
-    element: (
+    element: route.path === "/tutorial" ? (
+      <PublicRoute>
+        <route.component />
+      </PublicRoute>
+    ) : (
       <ProtectedRoute>
         <route.component />
       </ProtectedRoute>
