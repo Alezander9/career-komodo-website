@@ -2,15 +2,17 @@ import { PageContainer, MainContent, Card, Section } from "@/components/layout";
 import { H1 } from "@/components/ui/typography";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@convex/_generated/api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 export function AllChatsPage() {
   const chats = useQuery(api.queries.getChats);
   const createChat = useMutation(api.mutations.createChat);
+  const navigate = useNavigate();
 
   const handleCreateChat = async () => {
-    await createChat();
+    const chatId = await createChat();
+    navigate(`/chat/${chatId}`);
   };
 
   return (

@@ -10,6 +10,7 @@ import { KomodoImage } from "@/components/KomodoImage";
 import Typewriter from "./komodo-text";
 import { motion } from "motion/react";
 import { Sparkles } from "lucide-react";
+import { ChatsSidebar } from "@/components/ChatsSidebar";
 
 export function Chat() {
   const [response, setResponse] = useState("");
@@ -32,6 +33,7 @@ export function Chat() {
         content:
           "Hi! I'm the Career Komodo, your AI career coach. How can I help you today?",
         storageId: undefined,
+        percentComplete: 0,
         sender: "komodo",
       });
     }
@@ -130,67 +132,71 @@ export function Chat() {
   return (
     <PageContainer>
       <MainContent>
-        {chat && (
-          <motion.div layoutScroll>
-            <Card>
-              <div className="text-sm text-gray-500 mb-5">
-                {new Date(chat.createdAt).toLocaleString()}
-              </div>
-              <div className="flex-1 overflow-y-auto mb-4">
-                <ChatMessageList
-                  messages={chat.messages
-                    .filter((msg, index) => {
-                      const isLastMessage = index === chat.messages.length - 1;
-                      return !(isLastMessage && msg.sender === "komodo");
-                    })
-                    .map(
-                      (msg: {
-                        sender: "user" | "komodo";
-                        message: string;
-                      }) => ({
-                        content: msg.message,
-                        sender: msg.sender,
-                        timestamp: new Date(chat.createdAt),
-                        userName: msg.sender === "user" ? "You" : "Komodo",
-                      })
-                    )}
-                />
-                <motion.div layout className="flex items-center">
-                  <KomodoImage />
-                  {loading && (
-                    <Typewriter text="Komodo is thinking..." speed={20} />
-                  )}
-                  {response && <Typewriter text={response} speed={5} />}
-                </motion.div>
-              </div>
-              <SpeechToText onTranscription={handleTranscription} />
-              {percentComplete >= 80 && (
-                <div className="flex justify-center mt-10">
-                  <motion.button
-                    initial={{
-                      scale: 1,
-                      boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
-                      border: "2px solid rgb(255, 255, 255, 0.5)",
-                    }}
-                    whileHover={{
-                      scale: 1.05,
-                      boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
-                      border: "2px solid rgb(255, 255, 255, 0.7)",
-                    }}
-                    whileTap={{ scale: 0.95 }}
-                    className="border-white/50 hover:border-white/70 border-2 shadow-md shadow-white/30 text-white py-2 px-7 rounded-full disabled:opacity-50 flex items-center justify-center gap-2"
-                    onClick={() => {
-                      navigate(`/starmap/${chatId}`);
-                    }}
-                  >
-                    See recommendations!
-                    <Sparkles className="w-4 h-4" />
-                  </motion.button>
+        <div className="flex flex-row gap-4">
+          <ChatsSidebar selectedChatId={chatId} />
+          {chat && (
+            <motion.div className="w-full h-full" layoutScroll>
+              <Card>
+                <div className="text-sm text-gray-500 mb-5">
+                  {new Date(chat.createdAt).toLocaleString()}
                 </div>
-              )}
-            </Card>
-          </motion.div>
-        )}
+                <div className="flex-1 overflow-y-auto mb-4">
+                  <ChatMessageList
+                    messages={chat.messages
+                      .filter((msg, index) => {
+                        const isLastMessage =
+                          index === chat.messages.length - 1;
+                        return !(isLastMessage && msg.sender === "komodo");
+                      })
+                      .map(
+                        (msg: {
+                          sender: "user" | "komodo";
+                          message: string;
+                        }) => ({
+                          content: msg.message,
+                          sender: msg.sender,
+                          timestamp: new Date(chat.createdAt),
+                          userName: msg.sender === "user" ? "You" : "Komodo",
+                        })
+                      )}
+                  />
+                  <motion.div layout className="flex items-center">
+                    <KomodoImage />
+                    {loading && (
+                      <Typewriter text="Komodo is thinking..." speed={20} />
+                    )}
+                    {response && <Typewriter text={response} speed={5} />}
+                  </motion.div>
+                </div>
+                <SpeechToText onTranscription={handleTranscription} />
+                {percentComplete >= 80 && (
+                  <div className="flex justify-center mt-10">
+                    <motion.button
+                      initial={{
+                        scale: 1,
+                        boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
+                        border: "2px solid rgb(255, 255, 255, 0.5)",
+                      }}
+                      whileHover={{
+                        scale: 1.05,
+                        boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
+                        border: "2px solid rgb(255, 255, 255, 0.7)",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      className="border-white/50 hover:border-white/70 border-2 shadow-md shadow-white/30 text-white py-2 px-7 rounded-full disabled:opacity-50 flex items-center justify-center gap-2"
+                      onClick={() => {
+                        navigate(`/starmap/${chatId}`);
+                      }}
+                    >
+                      See recommendations!
+                      <Sparkles className="w-4 h-4" />
+                    </motion.button>
+                  </div>
+                )}
+              </Card>
+            </motion.div>
+          )}
+        </div>
       </MainContent>
     </PageContainer>
   );
