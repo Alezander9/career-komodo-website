@@ -140,32 +140,6 @@ export function MariemLandingPage() {
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="py-20 relative z-10">
-          <div className="container mx-auto px-4">
-            <H2 className="text-center mb-16 text-4xl">Success Stories</H2>
-            <div className="grid md:grid-cols-2 gap-12">
-              <div className="p-8 bg-background rounded-lg shadow-sm">
-                <P className="mb-4 italic">
-                  "CareerKomodo helped me navigate my career transition with confidence. The mentorship was invaluable!"
-                </P>
-                <div>
-                  <P className="font-semibold">Sarah Johnson</P>
-                  <P className="text-[hsl(var(--muted-foreground))]">Software Engineer</P>
-                </div>
-              </div>
-              <div className="p-8 bg-background rounded-lg shadow-sm">
-                <P className="mb-4 italic">
-                  "The personalized guidance I received was exactly what I needed to take my career to the next level."
-                </P>
-                <div>
-                  <P className="font-semibold">Michael Chen</P>
-                  <P className="text-[hsl(var(--muted-foreground))]">Product Manager</P>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* CTA Section */}
         <section className="py-20 relative z-10">
