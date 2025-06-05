@@ -13,7 +13,7 @@ export function Navbar() {
     // { label: "Star Map", path: "/finalstar" },
     // { label: "Audio Recording", path: "/audio-recording" },
     // { label: "Tutorial", path: "/tutorial" },
-    // { label: "About Us", path: "/about-us" },
+    { label: "About Us", path: "/about-us" },
     { label: "FAQ", path: "/faq" },
   ];
 
