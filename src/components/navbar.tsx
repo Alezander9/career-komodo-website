@@ -2,12 +2,20 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { SignOutButton } from "@clerk/clerk-react";
 import { Logo } from "@/components/logo";
+import { useMutation } from "convex/react";
+import { api } from "@convex/_generated/api";
 
 export function Navbar() {
   const navigate = useNavigate();
+  const createChat = useMutation(api.mutations.createChat);
+
+  const handleCreateChat = async () => {
+    const chatId = await createChat();
+    navigate(`/chat/${chatId}`);
+  };
 
   const navItems = [
-    { label: "Chat", path: "/chats" },
+    { label: "Chat", onClick: handleCreateChat },
     // { label: "Chat with Komodo", path: "/komodo-text" },
     { label: "Opportunities", path: "/opportunities" },
     // { label: "Star Map", path: "/finalstar" },
@@ -28,7 +36,7 @@ export function Navbar() {
               key={item.path}
               variant="outline"
               size="sm"
-              onClick={() => navigate(item.path)}
+              onClick={item.onClick ? item.onClick : () => navigate(item.path)}
               className="text-foreground hover:text-primary"
             >
               {item.label}
@@ -39,10 +47,14 @@ export function Navbar() {
 
       {/* Right side: Sign out button */}
       <SignOutButton>
-        <Button variant="outline" size="sm" className="text-foreground hover:text-primary">
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-foreground hover:text-primary"
+        >
           Sign Out
         </Button>
       </SignOutButton>
     </nav>
   );
-} 
+}
