@@ -24,13 +24,6 @@ export function MariemLandingPage() {
         <div className="container mx-auto flex justify-between items-center">
           <Logo />
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/komodo-text")}
-            >
-              Komodo Text
-            </Button>
             {isSignedIn ? (
               <Button
                 variant="outline"
@@ -103,7 +96,7 @@ export function MariemLandingPage() {
                 </>
               ) : (
                 <Button size="lg" onClick={() => navigate("/home")}>
-                  Return to Dashboard
+                  Go to Dashboard
                 </Button>
               )}
             </div>
@@ -185,7 +178,7 @@ export function MariemLandingPage() {
               </SignInButton>
             ) : (
               <Button size="lg" variant="outline" onClick={() => navigate("/home")}
-                className="bg-transparent border-white hover:bg-white/10">Return to Dashboard</Button>
+                className="bg-transparent border-white hover:bg-white/10">Go to Dashboard</Button>
             )}
           </div>
         </section>
