@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface Star {
   id: number;
@@ -12,15 +12,17 @@ interface Star {
 
 export function StarBackground() {
   const [stars, setStars] = React.useState<Star[]>([]);
-  const [shootingStars, setShootingStars] = React.useState<{
-    id: number;
-    x: number;
-    y: number;
-    length: number;
-    active: boolean;
-    angle: number;
-    speed: number;
-  }[]>([]);
+  const [shootingStars, setShootingStars] = React.useState<
+    {
+      id: number;
+      x: number;
+      y: number;
+      length: number;
+      active: boolean;
+      angle: number;
+      speed: number;
+    }[]
+  >([]);
   const shootingTimeouts = useRef<NodeJS.Timeout[]>([]);
   const nextId = useRef(0);
 
@@ -62,10 +64,16 @@ export function StarBackground() {
     }
     // Launch several shooting stars at random intervals
     for (let i = 0; i < 3; i++) {
-      const timeout = setTimeout(function schedule() {
-        launchShootingStar();
-        shootingTimeouts.current[i] = setTimeout(schedule, Math.random() * 4000 + 2000);
-      }, Math.random() * 3000 + 1000);
+      const timeout = setTimeout(
+        function schedule() {
+          launchShootingStar();
+          shootingTimeouts.current[i] = setTimeout(
+            schedule,
+            Math.random() * 4000 + 2000
+          );
+        },
+        Math.random() * 3000 + 1000
+      );
       shootingTimeouts.current.push(timeout);
     }
     return () => {
@@ -95,55 +103,58 @@ export function StarBackground() {
   }, []);
 
   return (
-    <div 
-      style={{ 
-        position: 'absolute',
+    <div
+      style={{
+        position: "absolute",
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        width: "100%",
+        height: "100%",
         zIndex: 1,
-        overflow: 'hidden',
-        backgroundColor: 'black',
+        overflow: "hidden",
+        backgroundColor: "black",
       }}
     >
       {stars.map((star) => (
         <div
           key={star.id}
           style={{
-            position: 'absolute',
+            position: "absolute",
             width: `${star.size}px`,
             height: `${star.size}px`,
             left: `${star.x}%`,
             top: `${star.y}%`,
-            backgroundColor: '#ffe066',
-            borderRadius: '50%',
+            backgroundColor: "#ffffff",
+            borderRadius: "50%",
             opacity: star.opacity,
             animation: `twinkle ${star.speed}s infinite ease-in-out`,
             animationDelay: `${star.delay}s`,
-            willChange: 'opacity, transform',
+            willChange: "opacity, transform",
           }}
         />
       ))}
-      {shootingStars.filter(s => s.active).map((shootingStar) => (
-        <div
-          key={shootingStar.id}
-          style={{
-            position: 'absolute',
-            left: `${shootingStar.x}%`,
-            top: `${shootingStar.y}%`,
-            width: `${shootingStar.length}px`,
-            height: '2px',
-            background: 'linear-gradient(90deg, #fffbe0 0%, #ffe066 60%, rgba(255,255,255,0) 100%)',
-            borderRadius: '2px',
-            boxShadow: '0 0 8px 2px #fffbe0',
-            transform: `rotate(${shootingStar.angle}deg)`,
-            opacity: 0.85,
-            pointerEvents: 'none',
-            zIndex: 2,
-          }}
-        />
-      ))}
+      {shootingStars
+        .filter((s) => s.active)
+        .map((shootingStar) => (
+          <div
+            key={shootingStar.id}
+            style={{
+              position: "absolute",
+              left: `${shootingStar.x}%`,
+              top: `${shootingStar.y}%`,
+              width: `${shootingStar.length}px`,
+              height: "2px",
+              background:
+                "linear-gradient(90deg, #ffffff 0%, #ffffff 60%, rgba(255,255,255,0) 100%)",
+              borderRadius: "2px",
+              boxShadow: "0 0 8px 2px #ffffff",
+              transform: `rotate(${shootingStar.angle}deg)`,
+              opacity: 0.85,
+              pointerEvents: "none",
+              zIndex: 2,
+            }}
+          />
+        ))}
     </div>
   );
 }

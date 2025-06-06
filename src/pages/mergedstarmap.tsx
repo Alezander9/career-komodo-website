@@ -5,6 +5,8 @@ import { StarMapPage } from "./starmap";
 import { StarBackground } from "../components/StarBackground";
 import { useParams } from "react-router-dom";
 import { Id } from "@convex/_generated/dataModel";
+import { BriefcaseBusiness, Sparkles } from "lucide-react";
+import { motion } from "motion/react";
 
 export type JobOpportunity = {
   title: string;
@@ -169,44 +171,42 @@ export function CombinedStarMapPage() {
               continue with our preset learning and career paths?
             </p>
             <div style={{ display: "flex", gap: 24, marginBottom: 12 }}>
-              <button
-                onClick={handleScrape}
-                style={{
-                  padding: "14px 32px",
-                  background:
-                    "linear-gradient(90deg,rgb(67, 58, 237) 60%, #ffe066 100%)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 12,
-                  fontSize: 19,
-                  fontWeight: 600,
-                  boxShadow: "0 2px 16px #0004",
-                  cursor: "pointer",
-                  transition: "background 0.2s",
-                  textShadow: "0 2px 8px #0009",
+              <motion.button
+                initial={{
+                  scale: 1,
+                  boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
+                  border: "2px solid rgb(255, 255, 255, 0.5)",
                 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
+                  border: "2px solid rgb(255, 255, 255, 0.7)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-black border-white/50 hover:border-white/70 border-2 shadow-md shadow-white/30 text-white py-2 px-7 rounded-full disabled:opacity-50 flex items-center justify-center gap-2 font-bold"
+                onClick={handleScrape}
               >
                 Scrape LinkedIn Jobs
-              </button>
-              <button
-                onClick={handleUsePreset}
-                style={{
-                  padding: "14px 32px",
-                  background:
-                    "linear-gradient(90deg, #a78bfa 60%,rgb(58, 73, 237) 100%)",
-                  color: "#fff",
-                  border: "none",
-                  borderRadius: 12,
-                  fontSize: 19,
-                  fontWeight: 600,
-                  boxShadow: "0 2px 16px #0004",
-                  cursor: "pointer",
-                  transition: "background 0.2s",
-                  textShadow: "0 2px 8px #0009",
+                <BriefcaseBusiness className="w-4 h-4" />
+              </motion.button>
+              <motion.button
+                initial={{
+                  scale: 1,
+                  boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
+                  border: "2px solid rgb(255, 255, 255, 0.5)",
                 }}
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 10px 15px -3px rgb(255, 255, 255, 0.5)",
+                  border: "2px solid rgb(255, 255, 255, 0.7)",
+                }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-black border-white/50 hover:border-white/70 border-2 shadow-md shadow-white/30 text-white py-2 px-7 rounded-full disabled:opacity-50 flex items-center justify-center gap-2 font-bold"
+                onClick={handleUsePreset}
               >
                 Continue with Preset
-              </button>
+                <BriefcaseBusiness className="w-4 h-4" />
+              </motion.button>
             </div>
             {error && (
               <div style={{ color: "#ffe066", marginTop: 18, fontWeight: 600 }}>

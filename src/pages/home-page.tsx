@@ -23,6 +23,12 @@ export function HomePage() {
   const navigate = useNavigate();
   const createUser = useMutation(api.mutations.createUser);
   const currentUser = useQuery(api.queries.getCurrentUser);
+  const createChat = useMutation(api.mutations.createChat);
+
+  const handleCreateChat = async () => {
+    const chatId = await createChat();
+    navigate(`/chat/${chatId}`);
+  };
 
   // Create user on first login
   useEffect(() => {
@@ -50,7 +56,7 @@ export function HomePage() {
               <Button
                 size="lg"
                 className="animate-pulse-slow"
-                onClick={() => navigate("/chats")}
+                onClick={handleCreateChat}
               >
                 Chat
               </Button>
