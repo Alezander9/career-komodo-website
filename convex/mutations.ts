@@ -104,6 +104,15 @@ export const createChat = mutation({
   },
 });
 
+export const deleteChat = mutation({
+  args: {
+    chatId: v.id("chats"),
+  },
+  handler: async (ctx, args) => {
+    await ctx.db.delete(args.chatId);
+  },
+});
+
 export const addMessageToChat = mutation({
   args: {
     chatId: v.id("chats"),
